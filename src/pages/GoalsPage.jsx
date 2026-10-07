@@ -6,11 +6,9 @@ function GoalsPage({
   goals,
   setShowProfile,
 }) {
-
   const [filter, setFilter] = useState("All Goals");
 
   const filteredGoals = goals.filter((goal) => {
-
     if (filter === "Completed") {
       return goal.progress === 100;
     }
@@ -22,6 +20,15 @@ function GoalsPage({
     return true;
   });
 
+  const completedGoals = goals.filter(
+    (goal) => goal.progress === 100
+  ).length;
+
+  const inProgressGoals = goals.filter(
+    (goal) =>
+      goal.progress > 0 &&
+      goal.progress < 100
+  ).length;
 
   return (
     <DashboardLayout
@@ -29,95 +36,140 @@ function GoalsPage({
       setShowProfile={setShowProfile}
     >
 
-      <section className="goal-page-banner">
+      {/* =========================
+          PAGE HERO
+      ========================= */}
 
-        <div>
+      <section className="goals-hero">
+
+        <div className="goals-hero-content">
 
           <span>
             ACADEMIC GOALS
           </span>
 
-          <h2>
-            My Goals
-          </h2>
+          <h1>
+            Turn your plans
+            <br />
+            into <strong>progress.</strong>
+          </h1>
 
           <p>
-            Organize your academic targets and track your progress.
+            Organize your academic targets, track your progress,
+            and stay focused on what matters.
           </p>
 
         </div>
 
 
-        <button
-          className="primary-button"
-          onClick={() => navigate("createGoal")}
-        >
-          + Create Goal
-        </button>
+        <div className="goals-hero-action">
 
-      </section>
+          <div className="goals-hero-circle">
+            🎯
+          </div>
 
-
-      {/* SUMMARY */}
-
-      <section className="goal-summary">
-
-        <div>
-
-          <strong>
-            {goals.length}
-          </strong>
-
-          <span>
-            Total Goals
-          </span>
-
-        </div>
-
-
-        <div>
-
-          <strong>
-            {
-              goals.filter(
-                (g) => g.progress === 100
-              ).length
-            }
-          </strong>
-
-          <span>
-            Completed
-          </span>
-
-        </div>
-
-
-        <div>
-
-          <strong>
-            {
-              goals.filter(
-                (g) =>
-                  g.progress > 0 &&
-                  g.progress < 100
-              ).length
-            }
-          </strong>
-
-          <span>
-            In Progress
-          </span>
+          <button
+            onClick={() => navigate("createGoal")}
+          >
+            ＋ Create Goal
+          </button>
 
         </div>
 
       </section>
 
 
-      {/* GOALS */}
+      {/* =========================
+          SUMMARY
+      ========================= */}
 
-      <section className="goals-section">
+      <section className="goals-summary">
 
-        <div className="section-top">
+        <div className="goals-summary-card">
+
+          <span className="summary-icon">
+            🎯
+          </span>
+
+          <div>
+            <strong>
+              {goals.length}
+            </strong>
+
+            <span>
+              Total Goals
+            </span>
+          </div>
+
+        </div>
+
+
+        <div className="goals-summary-card">
+
+          <span className="summary-icon">
+            ✓
+          </span>
+
+          <div>
+            <strong>
+              {completedGoals}
+            </strong>
+
+            <span>
+              Completed
+            </span>
+          </div>
+
+        </div>
+
+
+        <div className="goals-summary-card summary-highlight">
+
+          <span className="summary-icon">
+            ◷
+          </span>
+
+          <div>
+            <strong>
+              {inProgressGoals}
+            </strong>
+
+            <span>
+              In Progress
+            </span>
+          </div>
+
+        </div>
+
+
+        <div className="goals-summary-card">
+
+          <span className="summary-icon">
+            📈
+          </span>
+
+          <div>
+            <strong>
+              78%
+            </strong>
+
+            <span>
+              Average Progress
+            </span>
+          </div>
+
+        </div>
+
+      </section>
+
+
+      {/* =========================
+          GOALS SECTION
+      ========================= */}
+
+      <section className="goals-main-section">
+
+        <div className="goals-section-heading">
 
           <div>
 
@@ -132,77 +184,83 @@ function GoalsPage({
           </div>
 
 
-          {/* WORKING FILTER */}
+          <div className="goals-controls">
 
-          <select
-            className="filter-select"
-            value={filter}
-            onChange={(e) =>
-              setFilter(e.target.value)
-            }
-          >
+            <select
+              className="goals-filter"
+              value={filter}
+              onChange={(e) =>
+                setFilter(e.target.value)
+              }
+            >
 
-            <option>
-              All Goals
-            </option>
+              <option>
+                All Goals
+              </option>
 
-            <option>
-              In Progress
-            </option>
+              <option>
+                In Progress
+              </option>
 
-            <option>
-              Completed
-            </option>
+              <option>
+                Completed
+              </option>
 
-          </select>
+            </select>
+
+          </div>
 
         </div>
 
 
-        <div className="goal-grid">
+        {/* GOAL GRID */}
+
+        <div className="premium-goal-grid">
 
           {filteredGoals.length > 0 ? (
 
-            filteredGoals.map((goal) => (
+            filteredGoals.map((goal, index) => (
 
               <div
-                className="goal-card"
+                className={`premium-goal-card goal-card-${index + 1}`}
                 key={goal.id}
               >
 
-                <div className="goal-card-top">
+                <div className="premium-goal-top">
 
                   <span
-                    className={`priority ${goal.priority.toLowerCase()}`}
+                    className={`premium-priority ${goal.priority.toLowerCase()}`}
                   >
                     {goal.priority}
                   </span>
 
-                  <button className="goal-menu">
-                    ⋮
-                  </button>
+                  <span className="goal-number">
+                    0{index + 1}
+                  </span>
 
                 </div>
 
 
-                <h3>
-                  {goal.title}
-                </h3>
+                <div className="premium-goal-content">
+
+                  <span className="premium-goal-subject">
+                    {goal.subject}
+                  </span>
+
+                  <h3>
+                    {goal.title}
+                  </h3>
+
+                  <p>
+                    {goal.description}
+                  </p>
+
+                </div>
 
 
-                <span className="goal-subject">
-                  {goal.subject}
-                </span>
+                <div className="premium-goal-progress">
 
-
-                <p>
-                  {goal.description}
-                </p>
-
-
-                <div className="goal-progress">
-
-                  <div>
+                  <div className="premium-progress-info">
 
                     <span>
                       Progress
@@ -214,8 +272,7 @@ function GoalsPage({
 
                   </div>
 
-
-                  <div className="mini-progress">
+                  <div className="premium-progress-track">
 
                     <span
                       style={{
@@ -228,12 +285,11 @@ function GoalsPage({
                 </div>
 
 
-                <div className="goal-card-footer">
+                <div className="premium-goal-footer">
 
                   <span>
                     📅 {goal.date}
                   </span>
-
 
                   <button
                     onClick={() =>
@@ -251,9 +307,9 @@ function GoalsPage({
 
           ) : (
 
-            <div className="empty-goals">
+            <div className="premium-empty-goals">
 
-              <div>
+              <div className="empty-goal-icon">
                 🎯
               </div>
 
@@ -266,7 +322,6 @@ function GoalsPage({
               </p>
 
               <button
-                className="primary-button"
                 onClick={() => navigate("createGoal")}
               >
                 Create a Goal →
@@ -277,26 +332,31 @@ function GoalsPage({
           )}
 
 
-          {/* ADD GOAL CARD */}
+          {/* ADD GOAL */}
 
           {filter === "All Goals" && (
 
             <button
-              className="add-goal-card"
+              className="premium-add-goal"
               onClick={() => navigate("createGoal")}
             >
 
-              <span>
+              <div className="add-goal-icon">
                 ＋
-              </span>
+              </div>
 
               <strong>
                 Create a new goal
               </strong>
 
-              <small>
-                Break your academic target into smaller steps.
-              </small>
+              <span>
+                Start with a target and turn it
+                into smaller achievable steps.
+              </span>
+
+              <b>
+                Get started →
+              </b>
 
             </button>
 
