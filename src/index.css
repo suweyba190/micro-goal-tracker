@@ -1,0 +1,258 @@
+:root {
+  --text: #6b6375;
+  --text-h: #08060d;
+  --bg: #fff;
+  --border: #e5e4e7;
+  --code-bg: #f4f3ec;
+  --accent: #aa3bff;
+  --accent-bg: rgba(170, 59, 255, 0.1);
+  --accent-border: rgba(170, 59, 255, 0.5);
+  --social-bg: rgba(244, 243, 236, 0.5);
+  --shadow:
+    rgba(0, 0, 0, 0.1) 0 10px 15px -3px, rgba(0, 0, 0, 0.05) 0 4px 6px -2px;
+
+  --sans: system-ui, 'Segoe UI', Roboto, sans-serif;
+  --heading: system-ui, 'Segoe UI', Roboto, sans-serif;
+  --mono: ui-monospace, Consolas, monospace;
+
+  font: 18px/145% var(--sans);
+  letter-spacing: 0.18px;
+  color-scheme: light dark;
+  color: var(--text);
+  background: var(--bg);
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
+  @media (max-width: 1024px) {
+    font-size: 16px;
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --text: #9ca3af;
+    --text-h: #f3f4f6;
+    --bg: #16171d;
+    --border: #2e303a;
+    --code-bg: #1f2028;
+    --accent: #c084fc;
+    --accent-bg: rgba(192, 132, 252, 0.15);
+    --accent-border: rgba(192, 132, 252, 0.5);
+    --social-bg: rgba(47, 48, 58, 0.5);
+    --shadow:
+      rgba(0, 0, 0, 0.4) 0 10px 15px -3px, rgba(0, 0, 0, 0.25) 0 4px 6px -2px;
+  }
+
+  #social .button-icon {
+    filter: invert(1) brightness(2);
+  }
+}
+
+body {
+  margin: 0;
+}
+
+#root {
+  width: 1126px;
+  max-width: 100%;
+  margin: 0 auto;
+  text-align: center;
+  border-inline: 1px solid var(--border);
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+}
+
+h1,
+h2 {
+  font-family: var(--heading);
+  font-weight: 500;
+  color: var(--text-h);
+}
+
+h1 {
+  font-size: 56px;
+  letter-spacing: -1.68px;
+  margin: 32px 0;
+  @media (max-width: 1024px) {
+    font-size: 36px;
+    margin: 20px 0;
+  }
+}
+h2 {
+  font-size: 24px;
+  line-height: 118%;
+  letter-spacing: -0.24px;
+  margin: 0 0 8px;
+  @media (max-width: 1024px) {
+    font-size: 20px;
+  }
+}
+p {
+  margin: 0;
+}
+
+code,
+.counter {
+  font-family: var(--mono);
+  display: inline-flex;
+  border-radius: 4px;
+  color: var(--text-h);
+}
+
+code {
+  font-size: 15px;
+  line-height: 135%;
+  padding: 4px 8px;
+  background: var(--code-bg);
+}
+/* =========================
+   CREATE GOAL PAGE
+========================= */
+
+.goal-page {
+  min-height: 100vh;
+  background: #f8fafc;
+  padding: 50px 8%;
+}
+
+.goal-header {
+  max-width: 850px;
+  margin: 0 auto 30px;
+}
+
+.goal-header .back-button {
+  margin-bottom: 30px;
+}
+
+.goal-header-title span {
+  color: #2563eb;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+}
+
+.goal-header-title h1 {
+  font-size: 36px;
+  margin: 10px 0;
+}
+
+.goal-header-title p {
+  color: #64748b;
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+.goal-form-card {
+  max-width: 850px;
+  margin: 0 auto;
+  background: white;
+  border: 1px solid #e7ecf3;
+  border-radius: 18px;
+  padding: 35px;
+  box-shadow: 0 10px 35px rgba(15, 23, 42, 0.05);
+}
+
+.form-section {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 24px;
+}
+
+.form-section label {
+  font-size: 13px;
+  font-weight: 700;
+  color: #334155;
+  margin-bottom: 8px;
+}
+
+.form-section input,
+.form-section textarea,
+.form-section select {
+  width: 100%;
+  padding: 14px 15px;
+  border: 1px solid #dbe2ea;
+  border-radius: 10px;
+  outline: none;
+  font-size: 14px;
+  background: white;
+  color: #334155;
+}
+
+.form-section textarea {
+  resize: vertical;
+}
+
+.form-section input:focus,
+.form-section textarea:focus,
+.form-section select:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.goal-form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  border-top: 1px solid #eef2f6;
+  padding-top: 25px;
+  margin-top: 10px;
+}
+
+.cancel-button {
+  border: 1px solid #dbe2ea;
+  background: white;
+  color: #64748b;
+  padding: 14px 22px;
+  border-radius: 9px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.cancel-button:hover {
+  background: #f8fafc;
+}
+
+.goal-form-actions .primary-button {
+  padding: 14px 22px;
+}
+
+
+/* CREATE GOAL MOBILE */
+
+@media (max-width: 700px) {
+
+  .goal-page {
+    padding: 30px 20px;
+  }
+
+  .goal-form-card {
+    padding: 25px;
+  }
+
+  .goal-header-title h1 {
+    font-size: 30px;
+  }
+
+  .form-row {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+
+  .goal-form-actions {
+    flex-direction: column-reverse;
+  }
+
+  .goal-form-actions button {
+    width: 100%;
+  }
+}
