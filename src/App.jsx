@@ -1,15 +1,26 @@
 import { useState } from "react";
 import "./App.css";
+
 import HomePage from "./pages/HomePage";
 import RegisterPage from "./pages/RegisterPage";
 import LoginPage from "./pages/LoginPage";
-import DashboardLayout from "./components/DashboardLayout";
 import DashboardPage from "./pages/DashboardPage";
 import GoalsPage from "./pages/GoalsPage";
+import CreateGoalPage from "./pages/CreateGoalPage";
+
+import DashboardLayout from "./components/DashboardLayout";
+
 
 function App() {
+
   const [page, setPage] = useState("home");
+
   const [showProfile, setShowProfile] = useState(false);
+
+
+  /* =========================
+     GOALS DATA
+  ========================= */
 
   const [goals, setGoals] = useState([
     {
@@ -19,8 +30,10 @@ function App() {
       date: "Oct 08, 2026",
       priority: "High",
       progress: 75,
-      description: "Complete the database normalization assignment.",
+      description:
+        "Complete the remaining database normalization and SQL exercises."
     },
+
     {
       id: 2,
       title: "Revise Power BI",
@@ -28,8 +41,10 @@ function App() {
       date: "Oct 10, 2026",
       priority: "Medium",
       progress: 50,
-      description: "Revise Power BI dashboards and data visualization.",
+      description:
+        "Review Power BI concepts and practice creating dashboards."
     },
+
     {
       id: 3,
       title: "Study Regression",
@@ -37,8 +52,10 @@ function App() {
       date: "Oct 12, 2026",
       priority: "High",
       progress: 30,
-      description: "Review regression concepts and practice questions.",
+      description:
+        "Study regression analysis and practice building prediction models."
     },
+
     {
       id: 4,
       title: "Final Year Project",
@@ -46,205 +63,387 @@ function App() {
       date: "Oct 20, 2026",
       priority: "High",
       progress: 100,
-      description: "Continue development of the Micro-Goal Tracker.",
-    },
+      description:
+        "Continue developing and documenting the final year project."
+    }
   ]);
+
+
+  /* =========================
+     MICRO GOALS DATA
+  ========================= */
 
   const [microGoals, setMicroGoals] = useState([
     {
       id: 1,
       title: "Read Chapter 4",
-      subject: "Database Systems",
-      completed: true,
+      completed: true
     },
+
     {
       id: 2,
       title: "Complete normalization exercises",
-      subject: "Database Systems",
-      completed: true,
+      completed: true
     },
+
     {
       id: 3,
       title: "Review SQL joins",
-      subject: "Database Systems",
-      completed: false,
+      completed: false
     },
+
     {
       id: 4,
       title: "Practice 10 SQL questions",
-      subject: "Database Systems",
-      completed: false,
-    },
+      completed: false
+    }
   ]);
+
+
+  /* =========================
+     ACTIVITY DATA
+  ========================= */
 
   const [activities, setActivities] = useState([
     {
       id: 1,
       title: "Database Systems",
       duration: "1 hr 30 min",
-      date: "Today",
+      date: "Today"
     },
+
     {
       id: 2,
       title: "Business Intelligence",
       duration: "1 hr",
-      date: "Yesterday",
+      date: "Yesterday"
     },
+
     {
       id: 3,
       title: "Final Year Project",
       duration: "2 hrs",
-      date: "Sep 30, 2026",
-    },
+      date: "Sep 30, 2026"
+    }
   ]);
+
+
+  /* =========================
+     CREATE GOAL FORM
+  ========================= */
 
   const [newGoal, setNewGoal] = useState({
     title: "",
     subject: "",
     date: "",
     priority: "Medium",
-    description: "",
+    description: ""
   });
+
+
+  /* =========================
+     ACTIVITY FORM
+  ========================= */
 
   const [activityForm, setActivityForm] = useState({
     title: "",
     duration: "",
-    date: "",
+    date: ""
   });
 
+
+  /* =========================
+     NAVIGATION
+  ========================= */
+
   const navigate = (destination) => {
+
     setPage(destination);
+
     setShowProfile(false);
-    window.scrollTo(0, 0);
+
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth"
+    });
+
   };
+
+
+  /* =========================
+     REGISTER
+  ========================= */
 
   const handleRegister = (e) => {
+
     e.preventDefault();
+
     alert("Account created successfully!");
+
     navigate("login");
+
   };
+
+
+  /* =========================
+     LOGIN
+  ========================= */
 
   const handleLogin = (e) => {
+
     e.preventDefault();
+
     navigate("dashboard");
+
   };
 
+
+  /* =========================
+     CREATE GOAL
+  ========================= */
+
   const handleCreateGoal = (e) => {
+
     e.preventDefault();
 
-    if (!newGoal.title || !newGoal.subject || !newGoal.date) {
-      alert("Please fill in the goal title, subject and deadline.");
+
+    if (
+      !newGoal.title ||
+      !newGoal.subject ||
+      !newGoal.date
+    ) {
+
+      alert("Please fill in all required fields.");
+
       return;
     }
 
+
     const goal = {
+
       id: Date.now(),
+
       title: newGoal.title,
+
       subject: newGoal.subject,
+
       date: newGoal.date,
+
       priority: newGoal.priority,
+
       progress: 0,
+
       description:
-        newGoal.description || "No description added yet.",
+        newGoal.description ||
+        "Academic goal created by student."
+
     };
 
-    setGoals([...goals, goal]);
+
+    setGoals([
+      ...goals,
+      goal
+    ]);
+
 
     setNewGoal({
+
       title: "",
       subject: "",
       date: "",
       priority: "Medium",
-      description: "",
+      description: ""
+
     });
 
+
     navigate("goals");
+
   };
+
+
+  /* =========================
+     MICRO GOAL TOGGLE
+  ========================= */
 
   const toggleMicroGoal = (id) => {
+
     setMicroGoals(
-      microGoals.map((task) =>
-        task.id === id
-          ? { ...task, completed: !task.completed }
-          : task
+      microGoals.map((goal) =>
+        goal.id === id
+          ? {
+              ...goal,
+              completed: !goal.completed
+            }
+          : goal
       )
     );
+
   };
 
+
+  /* =========================
+     COMPLETED MICRO GOALS
+  ========================= */
+
+  const completedMicroGoals =
+    microGoals.filter(
+      (goal) => goal.completed
+    ).length;
+
+
+  /* =========================
+     ACTIVITY SUBMIT
+  ========================= */
+
   const handleActivitySubmit = (e) => {
+
     e.preventDefault();
 
-    if (!activityForm.title || !activityForm.duration) {
+
+    if (
+      !activityForm.title ||
+      !activityForm.duration
+    ) {
+
       alert("Please enter the activity and duration.");
+
       return;
     }
 
-    const activity = {
+
+    const newActivity = {
+
       id: Date.now(),
+
       title: activityForm.title,
+
       duration: activityForm.duration,
-      date: activityForm.date || "Today",
+
+      date:
+        activityForm.date ||
+        "Today"
+
     };
 
-    setActivities([activity, ...activities]);
+
+    setActivities([
+      newActivity,
+      ...activities
+    ]);
+
 
     setActivityForm({
+
       title: "",
       duration: "",
-      date: "",
+      date: ""
+
     });
 
-    alert("Study activity saved!");
+
+    alert("Study activity saved successfully!");
+
   };
 
-  const completedMicroGoals = microGoals.filter(
-    (task) => task.completed
-  ).length;
 
   return (
+
     <>
-      {page === "home" && <HomePage navigate={navigate} />}
+
+      {/* =========================
+          HOME
+      ========================= */}
+
+      {page === "home" && (
+
+        <HomePage
+          navigate={navigate}
+        />
+
+      )}
+
+
+      {/* =========================
+          REGISTER
+      ========================= */}
 
       {page === "register" && (
+
         <RegisterPage
           navigate={navigate}
           handleRegister={handleRegister}
         />
+
       )}
 
+
+      {/* =========================
+          LOGIN
+      ========================= */}
+
       {page === "login" && (
+
         <LoginPage
           navigate={navigate}
           handleLogin={handleLogin}
         />
+
       )}
 
+
+      {/* =========================
+          DASHBOARD
+      ========================= */}
+
       {page === "dashboard" && (
+
         <DashboardPage
           navigate={navigate}
           goals={goals}
           setShowProfile={setShowProfile}
         />
+
       )}
 
+
+      {/* =========================
+          GOALS
+      ========================= */}
+
       {page === "goals" && (
+
         <GoalsPage
           navigate={navigate}
           goals={goals}
           setShowProfile={setShowProfile}
         />
+
       )}
 
+
+      {/* =========================
+          CREATE GOAL
+      ========================= */}
+
       {page === "createGoal" && (
+
         <CreateGoalPage
           navigate={navigate}
           newGoal={newGoal}
           setNewGoal={setNewGoal}
           handleCreateGoal={handleCreateGoal}
         />
+
       )}
 
+
+      {/* =========================
+          MICRO GOALS
+      ========================= */}
+
       {page === "microgoals" && (
+
         <MicroGoalsPage
           navigate={navigate}
           microGoals={microGoals}
@@ -252,9 +451,16 @@ function App() {
           completedMicroGoals={completedMicroGoals}
           setShowProfile={setShowProfile}
         />
+
       )}
 
+
+      {/* =========================
+          ACTIVITY
+      ========================= */}
+
       {page === "activity" && (
+
         <ActivityPage
           navigate={navigate}
           activities={activities}
@@ -263,32 +469,58 @@ function App() {
           handleActivitySubmit={handleActivitySubmit}
           setShowProfile={setShowProfile}
         />
+
       )}
 
+
+      {/* =========================
+          REPORTS
+      ========================= */}
+
       {page === "reports" && (
+
         <ReportsPage
           navigate={navigate}
           goals={goals}
           setShowProfile={setShowProfile}
         />
+
       )}
 
+
+      {/* =========================
+          PROFILE
+      ========================= */}
+
       {showProfile && (
+
         <ProfileModal
-          close={() => setShowProfile(false)}
+
+          close={() =>
+            setShowProfile(false)
+          }
+
           logout={() => {
+
             setShowProfile(false);
+
             navigate("login");
+
           }}
+
         />
+
       )}
+
     </>
+
   );
+
 }
 
 
 /* =====================================================
-   CREATE GOAL
+   CREATE GOAL PAGE
 ===================================================== */
 
 function CreateGoalPage({
@@ -297,7 +529,9 @@ function CreateGoalPage({
   setNewGoal,
   handleCreateGoal,
 }) {
+
   return (
+
     <DashboardLayout
       navigate={navigate}
       setShowProfile={() => {}}
@@ -308,15 +542,16 @@ function CreateGoalPage({
         <div>
 
           <span>
-            ACADEMIC GOALS
+            ACADEMIC GOAL
           </span>
 
           <h2>
-            Create New Goal
+            Create a New Goal
           </h2>
 
           <p>
-            Define an academic goal and start breaking it into micro-goals.
+            Set an academic target and break it
+            into smaller achievable steps.
           </p>
 
         </div>
@@ -331,9 +566,11 @@ function CreateGoalPage({
           onSubmit={handleCreateGoal}
         >
 
-          <label>
+          <div className="form-group">
 
-            Goal Title
+            <label>
+              Goal Title
+            </label>
 
             <input
               type="text"
@@ -342,18 +579,19 @@ function CreateGoalPage({
               onChange={(e) =>
                 setNewGoal({
                   ...newGoal,
-                  title: e.target.value,
+                  title: e.target.value
                 })
               }
-              required
             />
 
-          </label>
+          </div>
 
 
-          <label>
+          <div className="form-group">
 
-            Subject
+            <label>
+              Subject
+            </label>
 
             <input
               type="text"
@@ -362,68 +600,76 @@ function CreateGoalPage({
               onChange={(e) =>
                 setNewGoal({
                   ...newGoal,
-                  subject: e.target.value,
+                  subject: e.target.value
                 })
               }
-              required
             />
 
-          </label>
+          </div>
 
 
-          <label>
+          <div className="form-row">
 
-            Deadline
+            <div className="form-group">
 
-            <input
-              type="date"
-              value={newGoal.date}
-              onChange={(e) =>
-                setNewGoal({
-                  ...newGoal,
-                  date: e.target.value,
-                })
-              }
-              required
-            />
+              <label>
+                Target Date
+              </label>
 
-          </label>
+              <input
+                type="date"
+                value={newGoal.date}
+                onChange={(e) =>
+                  setNewGoal({
+                    ...newGoal,
+                    date: e.target.value
+                  })
+                }
+              />
 
-
-          <label>
-
-            Priority
-
-            <select
-              value={newGoal.priority}
-              onChange={(e) =>
-                setNewGoal({
-                  ...newGoal,
-                  priority: e.target.value,
-                })
-              }
-            >
-
-              <option>
-                Low
-              </option>
-
-              <option>
-                Medium
-              </option>
-
-              <option>
-                High
-              </option>
-
-            </select>
-
-          </label>
+            </div>
 
 
-          <label>
+            <div className="form-group">
 
-            Description
+              <label>
+                Priority
+              </label>
+
+              <select
+                value={newGoal.priority}
+                onChange={(e) =>
+                  setNewGoal({
+                    ...newGoal,
+                    priority: e.target.value
+                  })
+                }
+              >
+
+                <option>
+                  Low
+                </option>
+
+                <option>
+                  Medium
+                </option>
+
+                <option>
+                  High
+                </option>
+
+              </select>
+
+            </div>
+
+          </div>
+
+
+          <div className="form-group">
+
+            <label>
+              Description
+            </label>
 
             <textarea
               placeholder="Describe what you want to achieve..."
@@ -431,20 +677,22 @@ function CreateGoalPage({
               onChange={(e) =>
                 setNewGoal({
                   ...newGoal,
-                  description: e.target.value,
+                  description: e.target.value
                 })
               }
-            ></textarea>
+            />
 
-          </label>
+          </div>
 
 
-          <div className="form-buttons">
+          <div className="form-actions">
 
             <button
               type="button"
               className="secondary-button"
-              onClick={() => navigate("goals")}
+              onClick={() =>
+                navigate("goals")
+              }
             >
               Cancel
             </button>
@@ -454,7 +702,7 @@ function CreateGoalPage({
               type="submit"
               className="primary-button"
             >
-              Save Goal →
+              Create Goal
             </button>
 
           </div>
@@ -464,12 +712,14 @@ function CreateGoalPage({
       </section>
 
     </DashboardLayout>
+
   );
+
 }
 
 
 /* =====================================================
-   MICRO GOALS
+   MICRO GOALS PAGE
 ===================================================== */
 
 function MicroGoalsPage({
@@ -480,180 +730,106 @@ function MicroGoalsPage({
   setShowProfile,
 }) {
 
-  const progress = Math.round(
-    (completedMicroGoals / microGoals.length) * 100
-  );
-
   return (
+
     <DashboardLayout
       navigate={navigate}
       setShowProfile={setShowProfile}
     >
 
-      <section className="micro-banner">
+      <section className="goal-page-banner">
 
         <div>
 
           <span>
-            DATABASE SYSTEMS
+            DAILY MICRO-GOALS
           </span>
 
           <h2>
-            Complete Database Assignment
+            Micro-goals
           </h2>
 
           <p>
-            Complete these small tasks to achieve your main goal.
+            Complete smaller steps to make steady
+            progress toward your academic goals.
           </p>
-
-        </div>
-
-
-        <div className="micro-banner-progress">
-
-          <strong>
-            {progress}%
-          </strong>
-
-          <span>
-            Today
-          </span>
 
         </div>
 
       </section>
 
 
-      <section className="micro-content-grid">
+      <section className="micro-goals-section">
 
-        <div className="micro-list-card">
+        <div className="micro-summary">
 
-          <div className="card-heading">
+          <strong>
+            {completedMicroGoals}
+          </strong>
 
-            <div>
+          <span>
+            of {microGoals.length} completed
+          </span>
+
+        </div>
+
+
+        <div className="micro-goals-list">
+
+          {microGoals.map((goal) => (
+
+            <div
+              className={`micro-goal-item ${
+                goal.completed
+                  ? "completed"
+                  : ""
+              }`}
+              key={goal.id}
+            >
+
+              <button
+                className="micro-checkbox"
+                onClick={() =>
+                  toggleMicroGoal(goal.id)
+                }
+              >
+                {goal.completed
+                  ? "✓"
+                  : ""}
+              </button>
+
 
               <span>
-                TODAY'S PLAN
+                {goal.title}
               </span>
-
-              <h2>
-                Micro-Goals
-              </h2>
 
             </div>
 
-
-            <span className="task-count">
-              {completedMicroGoals}/{microGoals.length}
-            </span>
-
-          </div>
-
-
-          <div className="micro-goal-list">
-
-            {microGoals.map((task) => (
-
-              <div
-                className={`micro-task ${
-                  task.completed ? "completed" : ""
-                }`}
-                key={task.id}
-              >
-
-                <button
-                  className="micro-check"
-                  onClick={() =>
-                    toggleMicroGoal(task.id)
-                  }
-                >
-                  {task.completed ? "✓" : ""}
-                </button>
-
-
-                <div className="micro-task-content">
-
-                  <strong>
-                    {task.title}
-                  </strong>
-
-                  <span>
-                    {task.subject}
-                  </span>
-
-                </div>
-
-
-                <span className="micro-status">
-
-                  {task.completed
-                    ? "Completed"
-                    : "Pending"}
-
-                </span>
-
-              </div>
-
-            ))}
-
-          </div>
+          ))}
 
         </div>
 
 
-        <div className="daily-progress-card">
-
-          <span>
-            TODAY'S PROGRESS
-          </span>
-
-
-          <div className="daily-circle">
-
-            <strong>
-              {progress}%
-            </strong>
-
-            <span>
-              Complete
-            </span>
-
-          </div>
-
-
-          <h3>
-
-            {progress === 100
-              ? "Great work! 🎉"
-              : "Keep going! 💪"}
-
-          </h3>
-
-
-          <p>
-            Small progress every day creates consistent
-            study habits.
-          </p>
-
-
-          <button
-            className="primary-button"
-            onClick={() => navigate("activity")}
-          >
-            Log Study Activity
-          </button>
-
-        </div>
+        <button
+          className="secondary-button"
+          onClick={() =>
+            navigate("goals")
+          }
+        >
+          ← Back to Goals
+        </button>
 
       </section>
 
     </DashboardLayout>
+
   );
+
 }
 
 
 /* =====================================================
-   ACTIVITY
+   ACTIVITY PAGE
 ===================================================== */
 
 function ActivityPage({
@@ -664,26 +840,29 @@ function ActivityPage({
   handleActivitySubmit,
   setShowProfile,
 }) {
+
   return (
+
     <DashboardLayout
       navigate={navigate}
       setShowProfile={setShowProfile}
     >
 
-      <section className="activity-banner">
+      <section className="goal-page-banner">
 
         <div>
 
           <span>
-            STUDY TRACKING
+            STUDY ACTIVITY
           </span>
 
           <h2>
-            Study Activity
+            Activity Tracking
           </h2>
 
           <p>
-            Keep a record of the time you spend studying.
+            Record your study sessions and monitor
+            your study consistency.
           </p>
 
         </div>
@@ -691,38 +870,102 @@ function ActivityPage({
       </section>
 
 
-      <section className="activity-layout">
+      <section className="activity-section">
 
-        <div className="activity-list">
+        <form
+          className="activity-form"
+          onSubmit={handleActivitySubmit}
+        >
 
-          <div className="card-heading">
+          <div className="form-group">
 
-            <div>
+            <label>
+              Activity
+            </label>
 
-              <span>
-                RECENT ACTIVITY
-              </span>
+            <input
+              type="text"
+              placeholder="e.g. Database Systems"
+              value={activityForm.title}
+              onChange={(e) =>
+                setActivityForm({
+                  ...activityForm,
+                  title: e.target.value
+                })
+              }
+            />
 
-              <h2>
-                Your Study Sessions
-              </h2>
+          </div>
+
+
+          <div className="form-row">
+
+            <div className="form-group">
+
+              <label>
+                Duration
+              </label>
+
+              <input
+                type="text"
+                placeholder="e.g. 1 hr 30 min"
+                value={activityForm.duration}
+                onChange={(e) =>
+                  setActivityForm({
+                    ...activityForm,
+                    duration: e.target.value
+                  })
+                }
+              />
+
+            </div>
+
+
+            <div className="form-group">
+
+              <label>
+                Date
+              </label>
+
+              <input
+                type="date"
+                value={activityForm.date}
+                onChange={(e) =>
+                  setActivityForm({
+                    ...activityForm,
+                    date: e.target.value
+                  })
+                }
+              />
 
             </div>
 
           </div>
 
 
+          <button
+            type="submit"
+            className="primary-button"
+          >
+            Save Activity
+          </button>
+
+        </form>
+
+
+        <div className="activity-history">
+
+          <h2>
+            Recent Activities
+          </h2>
+
+
           {activities.map((activity) => (
 
             <div
-              className="activity-item"
+              className="activity-card"
               key={activity.id}
             >
-
-              <div className="activity-icon">
-                ◷
-              </div>
-
 
               <div>
 
@@ -737,9 +980,9 @@ function ActivityPage({
               </div>
 
 
-              <strong>
+              <span>
                 {activity.duration}
-              </strong>
+              </span>
 
             </div>
 
@@ -747,98 +990,17 @@ function ActivityPage({
 
         </div>
 
-
-        <div className="log-activity-card">
-
-          <span>
-            NEW SESSION
-          </span>
-
-          <h2>
-            Log Study Activity
-          </h2>
-
-
-          <form onSubmit={handleActivitySubmit}>
-
-            <label>
-
-              Subject / Activity
-
-              <input
-                type="text"
-                placeholder="e.g. Business Intelligence"
-                value={activityForm.title}
-                onChange={(e) =>
-                  setActivityForm({
-                    ...activityForm,
-                    title: e.target.value,
-                  })
-                }
-                required
-              />
-
-            </label>
-
-
-            <label>
-
-              Duration
-
-              <input
-                type="text"
-                placeholder="e.g. 1 hr 30 min"
-                value={activityForm.duration}
-                onChange={(e) =>
-                  setActivityForm({
-                    ...activityForm,
-                    duration: e.target.value,
-                  })
-                }
-                required
-              />
-
-            </label>
-
-
-            <label>
-
-              Date
-
-              <input
-                type="date"
-                value={activityForm.date}
-                onChange={(e) =>
-                  setActivityForm({
-                    ...activityForm,
-                    date: e.target.value,
-                  })
-                }
-              />
-
-            </label>
-
-
-            <button
-              type="submit"
-              className="primary-button"
-            >
-              Save Activity →
-            </button>
-
-          </form>
-
-        </div>
-
       </section>
 
     </DashboardLayout>
+
   );
+
 }
 
 
 /* =====================================================
-   REPORTS
+   REPORTS PAGE
 ===================================================== */
 
 function ReportsPage({
@@ -846,26 +1008,47 @@ function ReportsPage({
   goals,
   setShowProfile,
 }) {
+
+  const completedGoals =
+    goals.filter(
+      (goal) => goal.progress === 100
+    ).length;
+
+
+  const averageProgress =
+    goals.length > 0
+      ? Math.round(
+          goals.reduce(
+            (total, goal) =>
+              total + goal.progress,
+            0
+          ) / goals.length
+        )
+      : 0;
+
+
   return (
+
     <DashboardLayout
       navigate={navigate}
       setShowProfile={setShowProfile}
     >
 
-      <section className="report-banner">
+      <section className="goal-page-banner">
 
         <div>
 
           <span>
-            ANALYTICS
+            PROGRESS REPORT
           </span>
 
           <h2>
-            Progress Reports
+            My Progress
           </h2>
 
           <p>
-            Understand your study consistency and academic progress.
+            Review your academic goal progress
+            and study performance.
           </p>
 
         </div>
@@ -873,180 +1056,85 @@ function ReportsPage({
       </section>
 
 
-      <section className="report-stat-grid">
+      <section className="report-summary">
 
-        <div className="report-stat">
-
-          <span>
-            Completion Rate
-          </span>
+        <div className="report-card">
 
           <strong>
-            78%
+            {goals.length}
           </strong>
 
-          <small>
-            ↑ 8% this month
-          </small>
+          <span>
+            Total Goals
+          </span>
 
         </div>
 
 
-        <div className="report-stat">
-
-          <span>
-            Goals Completed
-          </span>
+        <div className="report-card">
 
           <strong>
-            12
+            {completedGoals}
           </strong>
 
-          <small>
-            ↑ 3 this month
-          </small>
+          <span>
+            Completed Goals
+          </span>
 
         </div>
 
 
-        <div className="report-stat">
-
-          <span>
-            Study Hours
-          </span>
+        <div className="report-card">
 
           <strong>
-            24.5
+            {averageProgress}%
           </strong>
-
-          <small>
-            ↑ 4.5 hours
-          </small>
-
-        </div>
-
-
-        <div className="report-stat">
 
           <span>
-            Current Streak
+            Average Progress
           </span>
-
-          <strong>
-            7 days
-          </strong>
-
-          <small>
-            Personal best: 10 days
-          </small>
 
         </div>
 
       </section>
 
 
-      <section className="report-chart-card">
+      <section className="report-goals">
 
-        <div className="card-heading">
-
-          <div>
-
-            <span>
-              WEEKLY ANALYSIS
-            </span>
-
-            <h2>
-              Study Consistency
-            </h2>
-
-          </div>
+        <h2>
+          Goal Progress
+        </h2>
 
 
-          <div className="chart-legend">
+        {goals.map((goal) => (
 
-            <span>
-              ● Completed
-            </span>
+          <div
+            className="report-goal"
+            key={goal.id}
+          >
 
-            <span>
-              ○ Target
-            </span>
+            <div>
 
-          </div>
+              <strong>
+                {goal.title}
+              </strong>
 
-        </div>
+              <span>
+                {goal.subject}
+              </span>
+
+            </div>
 
 
-        <div className="report-chart">
+            <div className="report-progress">
 
-          {[55,72,48,88,68,82,92].map(
-            (height,index) => (
+              <div className="mini-progress">
 
-              <div
-                className="report-column"
-                key={index}
-              >
-
-                <div
-                  className="report-bar"
+                <span
                   style={{
-                    height: `${height}%`,
+                    width: `${goal.progress}%`
                   }}
-                ></div>
-
-                <span>
-                  {
-                    [
-                      "Mon",
-                      "Tue",
-                      "Wed",
-                      "Thu",
-                      "Fri",
-                      "Sat",
-                      "Sun",
-                    ][index]
-                  }
-                </span>
-
-              </div>
-
-            )
-          )}
-
-        </div>
-
-      </section>
-
-
-      <section className="report-bottom-grid">
-
-        <div className="report-insight-card">
-
-          <span>
-            GOAL BREAKDOWN
-          </span>
-
-          <h2>
-            Academic Progress
-          </h2>
-
-
-          {goals.slice(0,4).map((goal) => (
-
-            <div
-              className="report-goal"
-              key={goal.id}
-            >
-
-              <div>
-
-                <strong>
-                  {goal.title}
-                </strong>
-
-                <span>
-                  {goal.subject}
-                </span>
+                ></span>
 
               </div>
 
@@ -1056,75 +1144,62 @@ function ReportsPage({
 
             </div>
 
-          ))}
+          </div>
 
-        </div>
-
-
-        <div className="report-overall-card">
-
-          <span>
-            OVERALL
-          </span>
-
-          <h2>
-            Your consistency is improving.
-          </h2>
-
-          <p>
-            Keep completing small tasks regularly.
-            Consistent daily progress can help you
-            stay on track with your academic goals.
-          </p>
-
-          <button
-            className="primary-button"
-            onClick={() => navigate("microgoals")}
-          >
-            Continue Studying →
-          </button>
-
-        </div>
+        ))}
 
       </section>
 
     </DashboardLayout>
+
   );
+
 }
 
 
 /* =====================================================
-   PROFILE
+   PROFILE MODAL
 ===================================================== */
 
 function ProfileModal({
   close,
   logout,
 }) {
-  return (
-    <div className="profile-modal-overlay">
 
-      <div className="profile-modal">
+  return (
+
+    <div
+      className="profile-overlay"
+      onClick={close}
+    >
+
+      <div
+        className="profile-modal"
+        onClick={(e) =>
+          e.stopPropagation()
+        }
+      >
 
         <button
-          className="modal-close"
+          className="profile-close"
           onClick={close}
         >
           ×
         </button>
 
 
-        <div className="profile-avatar large">
-          AS
+        <div className="profile-avatar">
+          👤
         </div>
 
 
         <h2>
-          Ahmed Suweyba
+          Student Profile
         </h2>
 
+
         <p>
-          University Student
+          Manage your account and study profile.
         </p>
 
 
@@ -1133,11 +1208,11 @@ function ProfileModal({
           <div>
 
             <span>
-              Email
+              Name
             </span>
 
             <strong>
-              student@example.com
+              Student
             </strong>
 
           </div>
@@ -1146,24 +1221,11 @@ function ProfileModal({
           <div>
 
             <span>
-              Goals
+              Account Type
             </span>
 
             <strong>
-              4 active goals
-            </strong>
-
-          </div>
-
-
-          <div>
-
-            <span>
-              Study Streak
-            </span>
-
-            <strong>
-              7 days 🔥
+              University Student
             </strong>
 
           </div>
@@ -1172,7 +1234,7 @@ function ProfileModal({
 
 
         <button
-          className="secondary-button"
+          className="logout-button"
           onClick={logout}
         >
           Disconnect
@@ -1181,7 +1243,9 @@ function ProfileModal({
       </div>
 
     </div>
+
   );
+
 }
 
 
