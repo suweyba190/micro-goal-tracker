@@ -7,96 +7,121 @@ function MicroGoalsPage({
   completedMicroGoals,
   setShowProfile,
 }) {
+  const totalGoals = microGoals.length;
+  const progress =
+    totalGoals > 0 ? Math.round((completedMicroGoals / totalGoals) * 100) : 0;
+
   return (
     <DashboardLayout
       navigate={navigate}
       setShowProfile={setShowProfile}
+      activePage="microgoals"
     >
+      <div className="micro-goals-page">
 
-      <section className="goal-page-banner">
+        {/* Page Header */}
+        <div className="micro-header">
+          <div>
+            <p className="page-label">DAILY MICRO-GOALS</p>
+            <h1>Micro-goals</h1>
+            <p className="page-description">
+              Complete smaller steps to make steady progress toward your
+              academic goals.
+            </p>
+          </div>
 
-        <div>
-
-          <span>
-            DAILY MICRO-GOALS
-          </span>
-
-          <h2>
-            Micro-goals
-          </h2>
-
-          <p>
-            Complete smaller steps to make steady
-            progress toward your academic goals.
-          </p>
-
-        </div>
-
-      </section>
-
-
-      <section className="micro-goals-section">
-
-        <div className="micro-summary">
-
-          <strong>
-            {completedMicroGoals}
-          </strong>
-
-          <span>
-            of {microGoals.length} completed
-          </span>
-
-        </div>
-
-
-        <div className="micro-goals-list">
-
-          {microGoals.map((goal) => (
-
-            <div
-              className={`micro-goal-item ${
-                goal.completed
-                  ? "completed"
-                  : ""
-              }`}
-              key={goal.id}
-            >
-
-              <button
-                className="micro-checkbox"
-                onClick={() =>
-                  toggleMicroGoal(goal.id)
-                }
-              >
-                {goal.completed
-                  ? "✓"
-                  : ""}
-              </button>
-
-
-              <span>
-                {goal.title}
-              </span>
-
+          <div className="micro-progress-card">
+            <div className="micro-progress-number">
+              {completedMicroGoals}
+              <span>/ {totalGoals}</span>
             </div>
 
-          ))}
+            <p>completed</p>
 
+            <div className="progress-track">
+              <div
+                className="progress-fill"
+                style={{ width: `${progress}%` }}
+              ></div>
+            </div>
+
+            <strong>{progress}% complete</strong>
+          </div>
         </div>
 
+        {/* Goal Checklist */}
+        <div className="micro-content">
 
-        <button
-          className="secondary-button"
-          onClick={() =>
-            navigate("goals")
-          }
-        >
-          ← Back to Goals
-        </button>
+          <div className="micro-card">
+            <div className="micro-card-header">
+              <div>
+                <h2>Today's Checklist</h2>
+                <p>Small actions that move your goals forward.</p>
+              </div>
 
-      </section>
+              <div className="check-count">
+                {completedMicroGoals}/{totalGoals}
+              </div>
+            </div>
 
+            <div className="micro-list">
+              {microGoals.map((goal) => (
+                <div
+                  key={goal.id}
+                  className={`micro-item ${
+                    goal.done ? "micro-item-done" : ""
+                  }`}
+                  onClick={() => toggleMicroGoal(goal.id)}
+                >
+                  <div
+                    className={`micro-checkbox ${
+                      goal.done ? "checked" : ""
+                    }`}
+                  >
+                    {goal.done ? "✓" : ""}
+                  </div>
+
+                  <div className="micro-item-text">
+                    <h3>{goal.title}</h3>
+                    <p>
+                      {goal.done
+                        ? "Completed — great job!"
+                        : "Not completed yet"}
+                    </p>
+                  </div>
+
+                  <div className="micro-status">
+                    {goal.done ? "Completed" : "To do"}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Motivation Card */}
+          <div className="micro-motivation">
+            <div className="motivation-icon">✦</div>
+
+            <div>
+              <h2>Keep going, Ahmed! 💪</h2>
+              <p>
+                You're already {completedMicroGoals} step
+                {completedMicroGoals !== 1 ? "s" : ""} closer to your goals.
+                Consistency is built one small task at a time.
+              </p>
+            </div>
+          </div>
+
+          {/* Back Button */}
+          <button
+            className="back-goals-button"
+            onClick={() => navigate("goals")}
+          >
+            ← Back to Goals
+          </button>
+
+        </div>
+      </div>
     </DashboardLayout>
   );
 }
