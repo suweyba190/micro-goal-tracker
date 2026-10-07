@@ -1,74 +1,68 @@
 function HomePage({ navigate }) {
   return (
-    <div className="home-page">
+    <div className="premium-home">
 
-      <nav className="navbar">
+      {/* NAVBAR */}
+      <nav className="premium-nav">
 
-        <div className="brand">
-          <div className="brand-icon">✓</div>
-          <span>MicroGoal</span>
+        <div className="premium-logo">
+          Micro<span>Goal</span>
         </div>
 
-        <div className="nav-links">
-
+        <div className="premium-nav-links">
           <button onClick={() => navigate("home")}>
             Home
           </button>
 
-          <button onClick={() => navigate("home")}>
-            Features
+          <button onClick={() => navigate("login")}>
+            Sign In
           </button>
-
-          <button onClick={() => navigate("home")}>
-            About
-          </button>
-
-        </div>
-
-        <div className="nav-actions">
 
           <button
-            className="nav-start"
+            className="premium-nav-cta"
             onClick={() => navigate("register")}
           >
             Get Started
           </button>
-
         </div>
 
       </nav>
 
 
-      <section className="hero">
+      {/* HERO */}
+      <section className="premium-hero">
 
-        <div className="hero-content">
+        <div className="hero-glow glow-one"></div>
+        <div className="hero-glow glow-two"></div>
 
-          <div className="hero-badge">
-            ✦ Built for better study habits
+        <div className="premium-hero-content">
+
+          <div className="premium-label">
+            STUDY SMARTER • ONE STEP AT A TIME
           </div>
 
           <h1>
-            Turn big goals into
-            <span> small wins.</span>
+            Small goals.
+            <br />
+            <span>Big progress.</span>
           </h1>
 
           <p>
-            MicroGoal helps university students break academic
-            goals into manageable daily tasks and build consistent
-            study habits.
+            Turn your academic goals into small, manageable
+            micro-goals and build study habits that actually last.
           </p>
 
-          <div className="hero-buttons">
+          <div className="premium-hero-buttons">
 
             <button
-              className="primary-button"
+              className="premium-primary"
               onClick={() => navigate("register")}
             >
               Start Tracking →
             </button>
 
             <button
-              className="secondary-button"
+              className="premium-secondary"
               onClick={() => navigate("login")}
             >
               Sign In
@@ -76,140 +70,71 @@ function HomePage({ navigate }) {
 
           </div>
 
+          <div className="hero-note">
+            Designed for university students
+          </div>
+
         </div>
 
 
-        <div className="hero-visual">
+        {/* HERO VISUAL */}
+        <div className="premium-hero-visual">
 
-          <div className="hero-image-card">
+          <div className="hero-orbit orbit-one"></div>
+          <div className="hero-orbit orbit-two"></div>
+
+          <div className="hero-main-image">
 
             <img
-              src="/pexels-zandatsu-35545648.jpg"
+              src="/pexels-gera-cejas-3616330-37762503.jpg"
               alt="Student studying"
             />
 
           </div>
 
-          <div className="hero-floating-card streak-card">
 
-            <strong>
-              🔥 7 day streak
-            </strong>
+          {/* FLOATING PROGRESS CARD */}
+          <div className="floating-ui progress-ui">
 
-            <small>
-              Keep it going!
-            </small>
+            <div className="floating-icon">✓</div>
 
-          </div>
+            <div>
+              <small>Weekly Progress</small>
 
-          <div className="hero-floating-card progress-floating-card">
+              <strong>78%</strong>
 
-            <small>
-              Weekly progress
-            </small>
-
-            <strong>
-              78%
-            </strong>
-
-            <div className="mini-progress">
-              <span></span>
+              <div className="mini-progress">
+                <span></span>
+              </div>
             </div>
 
           </div>
 
-        </div>
 
-      </section>
+          {/* FLOATING GOAL CARD */}
+          <div className="floating-ui goal-ui">
 
-
-      <section className="home-stats">
-
-        <div>
-          <strong>100%</strong>
-          <span>Focus on academics</span>
-        </div>
-
-        <div>
-          <strong>Daily</strong>
-          <span>Micro-goal tracking</span>
-        </div>
-
-        <div>
-          <strong>Simple</strong>
-          <span>Progress analytics</span>
-        </div>
-
-      </section>
-
-
-      <section className="features-section">
-
-        <div className="section-heading">
-
-          <span>
-            FEATURES
-          </span>
-
-          <h2>
-            Everything you need to study consistently.
-          </h2>
-
-        </div>
-
-
-        <div className="features-grid">
-
-          <div className="feature-card">
-
-            <div className="feature-icon">
-              🎯
-            </div>
-
-            <h3>
-              Set Academic Goals
-            </h3>
-
-            <p>
-              Create clear academic goals and organize
-              what you want to accomplish.
-            </p>
-
-          </div>
-
-
-          <div className="feature-card">
-
-            <div className="feature-icon">
+            <div className="check-circle">
               ✓
             </div>
 
-            <h3>
-              Track Micro-Goals
-            </h3>
-
-            <p>
-              Break large goals into smaller daily tasks
-              that are easier to complete.
-            </p>
+            <div>
+              <strong>Micro-goal completed</strong>
+              <small>Database Systems</small>
+            </div>
 
           </div>
 
 
-          <div className="feature-card">
+          {/* STREAK CARD */}
+          <div className="floating-ui streak-ui">
 
-            <div className="feature-icon">
-              📊
+            <span>🔥</span>
+
+            <div>
+              <strong>7 days</strong>
+              <small>Study streak</small>
             </div>
-
-            <h3>
-              Monitor Progress
-            </h3>
-
-            <p>
-              See your study progress, completion rate
-              and consistency over time.
-            </p>
 
           </div>
 
@@ -218,38 +143,240 @@ function HomePage({ navigate }) {
       </section>
 
 
-      <section className="about-section">
+      {/* INTRO SECTION */}
+      <section className="premium-intro">
 
-        <div className="about-image">
+        <div className="intro-small">
+          THE PROBLEM
+        </div>
 
-          <img
-            src="/thaoantran0101-books-7744938_1920.jpg"
-            alt="Books"
-          />
+        <h2>
+          Big academic goals can feel
+          <span> overwhelming.</span>
+        </h2>
+
+        <p>
+          MicroGoal helps students break large academic tasks
+          into smaller actions that are easier to understand,
+          complete and track.
+        </p>
+
+      </section>
+
+
+      {/* HOW IT WORKS */}
+      <section className="premium-process">
+
+        <div className="process-heading">
+
+          <div className="intro-small">
+            HOW IT WORKS
+          </div>
+
+          <h2>
+            From intention
+            <br />
+            to <span>action.</span>
+          </h2>
 
         </div>
 
 
-        <div className="about-content">
+        <div className="process-list">
 
-          <span>
-            ABOUT MICROGOAL
-          </span>
+          <div className="process-item">
+
+            <span className="process-number">
+              01
+            </span>
+
+            <div>
+              <h3>Set a Goal</h3>
+
+              <p>
+                Create an academic goal and give it
+                a clear deadline and priority.
+              </p>
+            </div>
+
+          </div>
+
+
+          <div className="process-item">
+
+            <span className="process-number">
+              02
+            </span>
+
+            <div>
+              <h3>Break It Down</h3>
+
+              <p>
+                Turn your larger goal into small,
+                achievable daily micro-goals.
+              </p>
+            </div>
+
+          </div>
+
+
+          <div className="process-item">
+
+            <span className="process-number">
+              03
+            </span>
+
+            <div>
+              <h3>Track Progress</h3>
+
+              <p>
+                Monitor completed tasks, study activity
+                and your overall consistency.
+              </p>
+            </div>
+
+          </div>
+
+        </div>
+
+      </section>
+
+
+      {/* BIG STATEMENT */}
+      <section className="premium-statement">
+
+        <div className="statement-number">
+          01
+        </div>
+
+        <h2>
+          Consistency is built
+          <br />
+          through <span>small actions.</span>
+        </h2>
+
+        <p>
+          MicroGoal gives students a simple way to stay
+          organized, reduce procrastination and keep moving
+          towards their academic goals.
+        </p>
+
+      </section>
+
+
+      {/* FEATURES */}
+      <section className="premium-features">
+
+        <div className="feature-heading">
+
+          <div className="intro-small">
+            BUILT FOR STUDENTS
+          </div>
 
           <h2>
-            Small steps create
-            <span> lasting habits.</span>
+            Everything you need
+            <br />
+            to stay <span>consistent.</span>
+          </h2>
+
+        </div>
+
+
+        <div className="feature-showcase">
+
+          <div className="feature-large">
+
+            <div className="feature-number">
+              01
+            </div>
+
+            <h3>
+              Academic Goals
+            </h3>
+
+            <p>
+              Create and organize goals for your
+              university courses, assignments and projects.
+            </p>
+
+            <div className="feature-arrow">
+              →
+            </div>
+
+          </div>
+
+
+          <div className="feature-large dark-feature">
+
+            <div className="feature-number">
+              02
+            </div>
+
+            <h3>
+              Micro Goals
+            </h3>
+
+            <p>
+              Break big tasks into smaller actions
+              that feel easier to complete.
+            </p>
+
+            <div className="feature-arrow">
+              →
+            </div>
+
+          </div>
+
+
+          <div className="feature-large">
+
+            <div className="feature-number">
+              03
+            </div>
+
+            <h3>
+              Progress Tracking
+            </h3>
+
+            <p>
+              See your progress and study activity
+              through a simple dashboard.
+            </p>
+
+            <div className="feature-arrow">
+              →
+            </div>
+
+          </div>
+
+        </div>
+
+      </section>
+
+
+      {/* FINAL CTA */}
+      <section className="premium-cta">
+
+        <div className="cta-glow"></div>
+
+        <div className="cta-content">
+
+          <div className="intro-small">
+            READY TO START?
+          </div>
+
+          <h2>
+            Your next achievement
+            <br />
+            starts with <span>one goal.</span>
           </h2>
 
           <p>
-            University life can become overwhelming when students
-            have assignments, projects, exams and other commitments.
-            MicroGoal makes academic progress easier by turning
-            large goals into small achievable actions.
+            Start small. Stay consistent. Make progress.
           </p>
 
           <button
-            className="primary-button"
+            className="premium-primary cta-button"
             onClick={() => navigate("register")}
           >
             Create Your Account →
@@ -260,34 +387,33 @@ function HomePage({ navigate }) {
       </section>
 
 
-      <footer className="footer">
+      {/* FOOTER */}
+      <footer className="premium-footer">
 
-        <div className="brand">
-
-          <div className="brand-icon">
-            ✓
-          </div>
-
-          <span>
-            MicroGoal
-          </span>
-
+        <div className="premium-logo">
+          Micro<span>Goal</span>
         </div>
 
         <p>
-          Helping students build better study habits,
-          one goal at a time.
+          A web-based micro-goal tracker for university students.
         </p>
 
-        <small>
-          © 2026 MicroGoal. Academic Project.
-        </small>
+        <div className="footer-actions">
+
+          <button onClick={() => navigate("login")}>
+            Sign In
+          </button>
+
+          <button onClick={() => navigate("register")}>
+            Get Started
+          </button>
+
+        </div>
 
       </footer>
 
     </div>
   );
 }
-
 
 export default HomePage;

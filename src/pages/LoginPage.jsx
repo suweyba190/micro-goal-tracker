@@ -2,6 +2,7 @@ function LoginPage({ navigate, handleLogin }) {
   return (
     <div className="auth-page">
 
+      {/* LEFT SIDE */}
       <div className="auth-visual">
 
         <img
@@ -12,25 +13,29 @@ function LoginPage({ navigate, handleLogin }) {
         <div className="auth-overlay"></div>
 
         <div className="auth-brand">
-
           <div className="brand-icon">
             ✓
           </div>
 
           MicroGoal
-
         </div>
 
 
         <div className="auth-quote">
 
+          <div className="auth-small-label">
+            BUILD BETTER STUDY HABITS
+          </div>
+
           <h2>
             Your goals.
-            <span> Your progress.</span>
+            <br />
+            <span>Your progress.</span>
           </h2>
 
           <p>
-            Stay consistent and make progress every day.
+            Stay consistent, track your progress,
+            and move closer to your academic goals.
           </p>
 
         </div>
@@ -58,6 +63,7 @@ function LoginPage({ navigate, handleLogin }) {
       </div>
 
 
+      {/* RIGHT SIDE */}
       <div className="auth-form-area">
 
         <button
@@ -71,7 +77,7 @@ function LoginPage({ navigate, handleLogin }) {
         <div className="auth-form">
 
           <div className="mobile-brand">
-            ✓ MicroGoal
+            <span>✓</span> MicroGoal
           </div>
 
 
@@ -98,7 +104,6 @@ function LoginPage({ navigate, handleLogin }) {
           >
 
             <label>
-
               Email Address
 
               <input
@@ -106,12 +111,10 @@ function LoginPage({ navigate, handleLogin }) {
                 placeholder="Enter your email"
                 required
               />
-
             </label>
 
 
             <label>
-
               Password
 
               <input
@@ -119,7 +122,6 @@ function LoginPage({ navigate, handleLogin }) {
                 placeholder="Enter your password"
                 required
               />
-
             </label>
 
 
@@ -175,6 +177,5 @@ function LoginPage({ navigate, handleLogin }) {
     </div>
   );
 }
-
 
 export default LoginPage;
