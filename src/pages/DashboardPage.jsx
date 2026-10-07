@@ -5,230 +5,513 @@ function DashboardPage({
   goals,
   setShowProfile,
 }) {
-  const completedGoals = goals.filter(
-    (goal) => goal.progress === 100
-  ).length;
-
-  const averageProgress =
-    goals.length > 0
-      ? Math.round(
-          goals.reduce((sum, goal) => sum + goal.progress, 0) /
-            goals.length
-        )
-      : 0;
-
   return (
     <DashboardLayout
       navigate={navigate}
       setShowProfile={setShowProfile}
-      activePage="dashboard"
     >
-      <div className="dashboard-page">
 
-        {/* Welcome */}
-        <div className="dashboard-welcome">
-          <div>
-            <p className="page-label">STUDENT DASHBOARD</p>
+      <section className="welcome-banner">
 
-            <h1>
-              Good evening, Ahmed 👋
-            </h1>
+        <div>
 
-            <p>
-              Keep going. Every small step counts.
-            </p>
-          </div>
+          <span>
+            YOUR STUDY JOURNEY
+          </span>
 
-          <button
-            className="dashboard-add-button"
-            onClick={() => navigate("createGoal")}
-          >
-            + Create Goal
-          </button>
-        </div>
+          <h2>
+            You're making great progress!
+          </h2>
 
-        {/* Statistics */}
-        <div className="dashboard-stats">
+          <p>
+            You have completed 78% of your planned
+            study goals this week.
+          </p>
 
-          <div className="dashboard-stat-card">
-            <div className="dashboard-stat-icon">🎯</div>
+          <div className="banner-progress">
 
             <div>
-              <span>Total Goals</span>
-              <strong>{goals.length}</strong>
-              <small>Academic goals</small>
+
+              <span>
+                Weekly progress
+              </span>
+
+              <strong>
+                78%
+              </strong>
+
             </div>
-          </div>
 
-          <div className="dashboard-stat-card">
-            <div className="dashboard-stat-icon">✓</div>
-
-            <div>
-              <span>Goals Completed</span>
-              <strong>{completedGoals}</strong>
-              <small>Completed goals</small>
+            <div className="mini-progress">
+              <span></span>
             </div>
-          </div>
 
-          <div className="dashboard-stat-card">
-            <div className="dashboard-stat-icon">↗</div>
-
-            <div>
-              <span>Overall Progress</span>
-              <strong>{averageProgress}%</strong>
-              <small>Across all goals</small>
-            </div>
-          </div>
-
-          <div className="dashboard-stat-card">
-            <div className="dashboard-stat-icon">🔥</div>
-
-            <div>
-              <span>Study Streak</span>
-              <strong>7</strong>
-              <small>Days in a row</small>
-            </div>
           </div>
 
         </div>
 
-        {/* Main content */}
-        <div className="dashboard-main-grid">
+        <div className="large-progress-ring">
 
-          {/* Goals */}
-          <div className="dashboard-goals-card">
+          <strong>
+            78%
+          </strong>
 
-            <div className="dashboard-card-heading">
-              <div>
-                <h2>My Academic Goals</h2>
-                <p>Keep track of your current goals.</p>
-              </div>
+          <span>
+            Complete
+          </span>
 
-              <button
-                onClick={() => navigate("goals")}
-                className="view-all-button"
-              >
-                View all →
-              </button>
+        </div>
+
+      </section>
+
+
+      <section className="streak-section">
+
+        <div className="streak-header">
+
+          <div className="streak-title">
+
+            <div className="streak-fire">
+              🔥
             </div>
 
-            <div className="dashboard-goal-list">
+            <div>
 
-              {goals.slice(0, 4).map((goal) => (
-                <div
-                  className="dashboard-goal-item"
-                  key={goal.id}
-                >
-                  <div className="goal-item-top">
+              <h2>
+                Your Study Streak
+              </h2>
 
-                    <div>
-                      <h3>{goal.title}</h3>
-                      <span>{goal.subject}</span>
-                    </div>
-
-                    <strong>{goal.progress}%</strong>
-
-                  </div>
-
-                  <div className="dashboard-progress-track">
-                    <div
-                      className="dashboard-progress-fill"
-                      style={{
-                        width: `${goal.progress}%`,
-                      }}
-                    ></div>
-                  </div>
-
-                </div>
-              ))}
+              <p>
+                Consistency is the key to better study habits.
+              </p>
 
             </div>
 
           </div>
 
-          {/* Quick Actions */}
-          <div className="dashboard-actions-card">
+          <div className="streak-number">
+            7 days
+          </div>
 
-            <p className="page-label">QUICK ACTIONS</p>
+        </div>
 
-            <h2>Stay productive.</h2>
 
-            <p className="quick-description">
-              Choose an action and keep making progress on your academic
-              goals.
-            </p>
+        <div className="streak-days">
 
-            <button
-              onClick={() => navigate("createGoal")}
-              className="quick-action"
+          {[
+            ["MON", "✓", "done"],
+            ["TUE", "✓", "done"],
+            ["WED", "✓", "done"],
+            ["THU", "✓", "done"],
+            ["FRI", "✓", "done"],
+            ["SAT", "✓", "done"],
+            ["SUN", "●", "today"],
+          ].map(([day, mark, state]) => (
+
+            <div
+              className="streak-day"
+              key={day}
             >
-              <span>+</span>
-              <div>
-                <strong>Create a Goal</strong>
-                <small>Set a new academic target</small>
+
+              <span className="streak-day-name">
+                {day}
+              </span>
+
+              <div
+                className={`streak-circle ${state}`}
+              >
+                {mark}
               </div>
-            </button>
+
+            </div>
+
+          ))}
+
+        </div>
+
+
+        <div className="streak-message">
+
+          🔥 Amazing! You've studied consistently for 7 days.
+          Complete today's goal to keep your streak alive!
+
+        </div>
+
+      </section>
+
+
+      <section className="stats-grid">
+
+        <div className="stat-card">
+
+          <div className="stat-icon">
+            🎯
+          </div>
+
+          <strong className="stat-number">
+            {goals.length}
+          </strong>
+
+          <span className="stat-label">
+            Active Goals
+          </span>
+
+          <span className="stat-change">
+            ↑ 2 this week
+          </span>
+
+        </div>
+
+
+        <div className="stat-card">
+
+          <div className="stat-icon">
+            ✓
+          </div>
+
+          <strong className="stat-number">
+            12
+          </strong>
+
+          <span className="stat-label">
+            Goals Completed
+          </span>
+
+          <span className="stat-change">
+            ↑ 3 this week
+          </span>
+
+        </div>
+
+
+        <div className="stat-card">
+
+          <div className="stat-icon">
+            🔥
+          </div>
+
+          <strong className="stat-number">
+            7
+          </strong>
+
+          <span className="stat-label">
+            Study Streak
+          </span>
+
+          <span className="stat-change">
+            Keep going!
+          </span>
+
+        </div>
+
+
+        <div className="stat-card">
+
+          <div className="stat-icon">
+            ◷
+          </div>
+
+          <strong className="stat-number">
+            4.5h
+          </strong>
+
+          <span className="stat-label">
+            Study Time
+          </span>
+
+          <span className="stat-change">
+            ↑ 1.2h this week
+          </span>
+
+        </div>
+
+      </section>
+
+
+      <section className="dashboard-cards">
+
+        <div className="dashboard-card">
+
+          <div className="card-heading">
+
+            <div>
+
+              <span>
+                TODAY
+              </span>
+
+              <h2>
+                Today's Micro-Goals
+              </h2>
+
+            </div>
 
             <button
               onClick={() => navigate("microgoals")}
-              className="quick-action"
             >
-              <span>✓</span>
-              <div>
-                <strong>View Micro-goals</strong>
-                <small>Complete your smaller tasks</small>
-              </div>
+              View all →
             </button>
+
+          </div>
+
+
+          <div className="task-list">
+
+            <div className="task-item completed">
+
+              <div className="task-check">
+                ✓
+              </div>
+
+              <div>
+
+                <strong>
+                  Read Chapter 4
+                </strong>
+
+                <small>
+                  Database Systems
+                </small>
+
+              </div>
+
+            </div>
+
+
+            <div className="task-item completed">
+
+              <div className="task-check">
+                ✓
+              </div>
+
+              <div>
+
+                <strong>
+                  Complete SQL exercises
+                </strong>
+
+                <small>
+                  Database Systems
+                </small>
+
+              </div>
+
+            </div>
+
+
+            <div className="task-item">
+
+              <div className="task-check"></div>
+
+              <div>
+
+                <strong>
+                  Review SQL joins
+                </strong>
+
+                <small>
+                  Database Systems
+                </small>
+
+              </div>
+
+            </div>
+
+
+            <div className="task-item">
+
+              <div className="task-check"></div>
+
+              <div>
+
+                <strong>
+                  Practice 10 questions
+                </strong>
+
+                <small>
+                  Database Systems
+                </small>
+
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <div className="dashboard-card">
+
+          <div className="card-heading">
+
+            <div>
+
+              <span>
+                GOALS
+              </span>
+
+              <h2>
+                Goal Progress
+              </h2>
+
+            </div>
 
             <button
-              onClick={() => navigate("activity")}
-              className="quick-action"
+              onClick={() => navigate("goals")}
             >
-              <span>◷</span>
-              <div>
-                <strong>Log Activity</strong>
-                <small>Record your study session</small>
-              </div>
+              View all →
             </button>
 
           </div>
 
-        </div>
 
-        {/* Bottom progress section */}
-        <div className="dashboard-bottom-card">
+          <div className="goal-progress-list">
 
-          <div>
-            <p className="page-label">YOUR PROGRESS</p>
-            <h2>You're making progress 🎉</h2>
-            <p>
-              Keep breaking your academic goals into smaller, manageable
-              micro-goals.
-            </p>
-          </div>
+            {goals.slice(0, 4).map((goal) => (
 
-          <div className="dashboard-big-progress">
-
-            <div className="big-progress-number">
-              {averageProgress}%
-            </div>
-
-            <div className="big-progress-track">
               <div
-                className="big-progress-fill"
-                style={{
-                  width: `${averageProgress}%`,
-                }}
-              ></div>
-            </div>
+                className="goal-progress-item"
+                key={goal.id}
+              >
 
-            <span>Overall completion</span>
+                <div>
+
+                  <strong>
+                    {goal.title}
+                  </strong>
+
+                  <span>
+                    {goal.subject}
+                  </span>
+
+                </div>
+
+
+                <strong>
+                  {goal.progress}%
+                </strong>
+
+
+                <div className="mini-progress">
+
+                  <span
+                    style={{
+                      width: `${goal.progress}%`,
+                    }}
+                  ></span>
+
+                </div>
+
+              </div>
+
+            ))}
 
           </div>
 
         </div>
 
-      </div>
+      </section>
+
+
+      <section className="dashboard-bottom">
+
+        <div className="dashboard-card weekly-chart">
+
+          <div className="card-heading">
+
+            <div>
+
+              <span>
+                CONSISTENCY
+              </span>
+
+              <h2>
+                Weekly Study Activity
+              </h2>
+
+            </div>
+
+          </div>
+
+
+          <div className="simple-chart">
+
+            {[60, 80, 45, 90, 70, 55, 85].map(
+              (height, index) => (
+
+                <div
+                  className="chart-column"
+                  key={index}
+                >
+
+                  <div
+                    className="chart-bar"
+                    style={{
+                      height: `${height}%`,
+                    }}
+                  ></div>
+
+                  <span>
+                    {["M", "T", "W", "T", "F", "S", "S"][index]}
+                  </span>
+
+                </div>
+
+              )
+            )}
+
+          </div>
+
+        </div>
+
+
+        <div className="dashboard-card quick-actions">
+
+          <div className="card-heading">
+
+            <div>
+
+              <span>
+                ACTIONS
+              </span>
+
+              <h2>
+                Quick Actions
+              </h2>
+
+            </div>
+
+          </div>
+
+
+          <button
+            onClick={() => navigate("createGoal")}
+          >
+            <span>＋</span>
+            Create New Goal
+          </button>
+
+
+          <button
+            onClick={() => navigate("activity")}
+          >
+            <span>◷</span>
+            Log Study Activity
+          </button>
+
+
+          <button
+            onClick={() => navigate("reports")}
+          >
+            <span>▥</span>
+            View Progress Report
+          </button>
+
+        </div>
+
+      </section>
+
     </DashboardLayout>
   );
 }
