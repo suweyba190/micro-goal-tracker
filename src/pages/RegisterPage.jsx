@@ -2,6 +2,7 @@ function RegisterPage({ navigate, handleRegister }) {
   return (
     <div className="auth-page">
 
+      {/* LEFT SIDE */}
       <div className="auth-visual">
 
         <img
@@ -24,14 +25,19 @@ function RegisterPage({ navigate, handleRegister }) {
 
         <div className="auth-quote">
 
+          <div className="auth-small-label">
+            START YOUR JOURNEY
+          </div>
+
           <h2>
             Progress starts with
-            <span> one small step.</span>
+            <br />
+            <span>one small step.</span>
           </h2>
 
           <p>
-            Build better study habits by focusing on
-            achievable daily goals.
+            Build better study habits by turning
+            your academic goals into achievable daily actions.
           </p>
 
         </div>
@@ -59,6 +65,7 @@ function RegisterPage({ navigate, handleRegister }) {
       </div>
 
 
+      {/* RIGHT SIDE */}
       <div className="auth-form-area">
 
         <button
@@ -72,7 +79,7 @@ function RegisterPage({ navigate, handleRegister }) {
         <div className="auth-form">
 
           <div className="mobile-brand">
-            ✓ MicroGoal
+            <span>✓</span> MicroGoal
           </div>
 
 
@@ -106,7 +113,6 @@ function RegisterPage({ navigate, handleRegister }) {
                 placeholder="Enter your full name"
                 required
               />
-
             </label>
 
 
@@ -118,7 +124,6 @@ function RegisterPage({ navigate, handleRegister }) {
                 placeholder="Enter your email"
                 required
               />
-
             </label>
 
 
@@ -130,7 +135,6 @@ function RegisterPage({ navigate, handleRegister }) {
                 placeholder="Create a password"
                 required
               />
-
             </label>
 
 
@@ -142,7 +146,6 @@ function RegisterPage({ navigate, handleRegister }) {
                 placeholder="Confirm your password"
                 required
               />
-
             </label>
 
 
@@ -189,6 +192,5 @@ function RegisterPage({ navigate, handleRegister }) {
     </div>
   );
 }
-
 
 export default RegisterPage;

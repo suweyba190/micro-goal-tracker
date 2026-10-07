@@ -11,92 +11,207 @@ function DashboardPage({
       setShowProfile={setShowProfile}
     >
 
-      <section className="welcome-banner">
+      {/* =========================
+          DASHBOARD HERO
+      ========================= */}
 
-        <div>
+      <section className="dashboard-hero">
 
-          <span>
+        <div className="dashboard-hero-content">
+
+          <div className="dashboard-eyebrow">
             YOUR STUDY JOURNEY
-          </span>
+          </div>
 
-          <h2>
-            You're making great progress!
-          </h2>
+          <h1>
+            Keep moving.
+            <br />
+            <span>You're doing great.</span>
+          </h1>
 
           <p>
             You have completed 78% of your planned
-            study goals this week.
+            study goals this week. Keep the momentum going.
           </p>
 
-          <div className="banner-progress">
+          <div className="dashboard-hero-actions">
 
-            <div>
+            <button
+              className="dashboard-primary-button"
+              onClick={() => navigate("createGoal")}
+            >
+              ＋ Create Goal
+            </button>
 
-              <span>
-                Weekly progress
-              </span>
-
-              <strong>
-                78%
-              </strong>
-
-            </div>
-
-            <div className="mini-progress">
-              <span></span>
-            </div>
+            <button
+              className="dashboard-secondary-button"
+              onClick={() => navigate("reports")}
+            >
+              View Report →
+            </button>
 
           </div>
 
         </div>
 
-        <div className="large-progress-ring">
 
-          <strong>
-            78%
-          </strong>
+        {/* PROGRESS VISUAL */}
 
-          <span>
-            Complete
-          </span>
+        <div className="dashboard-progress-visual">
+
+          <div className="progress-orbit"></div>
+
+          <div className="dashboard-progress-ring">
+
+            <div>
+              <strong>78%</strong>
+              <span>WEEKLY<br />PROGRESS</span>
+            </div>
+
+          </div>
+
+          <div className="progress-floating-card">
+
+            <span>✓</span>
+
+            <div>
+              <strong>Great progress</strong>
+              <small>Keep your streak alive</small>
+            </div>
+
+          </div>
 
         </div>
 
       </section>
 
 
-      <section className="streak-section">
+      {/* =========================
+          QUICK STATS
+      ========================= */}
 
-        <div className="streak-header">
+      <section className="dashboard-stats">
 
-          <div className="streak-title">
+        <div className="dashboard-stat-card">
 
-            <div className="streak-fire">
-              🔥
-            </div>
+          <div className="dashboard-stat-top">
+            <span className="dashboard-stat-icon">🎯</span>
+            <span className="dashboard-stat-trend">↑ 2</span>
+          </div>
 
-            <div>
+          <strong>
+            {goals.length}
+          </strong>
 
-              <h2>
-                Your Study Streak
-              </h2>
+          <span>
+            Active Goals
+          </span>
 
-              <p>
-                Consistency is the key to better study habits.
-              </p>
+          <small>
+            This week
+          </small>
 
-            </div>
+        </div>
+
+
+        <div className="dashboard-stat-card">
+
+          <div className="dashboard-stat-top">
+            <span className="dashboard-stat-icon">✓</span>
+            <span className="dashboard-stat-trend">↑ 3</span>
+          </div>
+
+          <strong>
+            12
+          </strong>
+
+          <span>
+            Goals Completed
+          </span>
+
+          <small>
+            This week
+          </small>
+
+        </div>
+
+
+        <div className="dashboard-stat-card dashboard-stat-highlight">
+
+          <div className="dashboard-stat-top">
+            <span className="dashboard-stat-icon">🔥</span>
+            <span className="dashboard-stat-trend">
+              Active
+            </span>
+          </div>
+
+          <strong>
+            7
+          </strong>
+
+          <span>
+            Study Streak
+          </span>
+
+          <small>
+            Days in a row
+          </small>
+
+        </div>
+
+
+        <div className="dashboard-stat-card">
+
+          <div className="dashboard-stat-top">
+            <span className="dashboard-stat-icon">◷</span>
+            <span className="dashboard-stat-trend">↑ 1.2h</span>
+          </div>
+
+          <strong>
+            4.5h
+          </strong>
+
+          <span>
+            Study Time
+          </span>
+
+          <small>
+            This week
+          </small>
+
+        </div>
+
+      </section>
+
+
+      {/* =========================
+          STUDY STREAK
+      ========================= */}
+
+      <section className="dashboard-streak">
+
+        <div className="dashboard-section-heading">
+
+          <div>
+
+            <span>
+              CONSISTENCY
+            </span>
+
+            <h2>
+              Your study streak
+            </h2>
 
           </div>
 
-          <div className="streak-number">
-            7 days
+          <div className="dashboard-streak-number">
+            🔥 7 days
           </div>
 
         </div>
 
 
-        <div className="streak-days">
+        <div className="streak-week">
 
           {[
             ["MON", "✓", "done"],
@@ -109,17 +224,15 @@ function DashboardPage({
           ].map(([day, mark, state]) => (
 
             <div
-              className="streak-day"
+              className="streak-week-day"
               key={day}
             >
 
-              <span className="streak-day-name">
+              <span>
                 {day}
               </span>
 
-              <div
-                className={`streak-circle ${state}`}
-              >
+              <div className={`streak-week-circle ${state}`}>
                 {mark}
               </div>
 
@@ -130,109 +243,33 @@ function DashboardPage({
         </div>
 
 
-        <div className="streak-message">
+        <div className="streak-bottom-message">
 
-          🔥 Amazing! You've studied consistently for 7 days.
-          Complete today's goal to keep your streak alive!
+          <span>🔥</span>
 
-        </div>
-
-      </section>
-
-
-      <section className="stats-grid">
-
-        <div className="stat-card">
-
-          <div className="stat-icon">
-            🎯
-          </div>
-
-          <strong className="stat-number">
-            {goals.length}
-          </strong>
-
-          <span className="stat-label">
-            Active Goals
-          </span>
-
-          <span className="stat-change">
-            ↑ 2 this week
-          </span>
-
-        </div>
-
-
-        <div className="stat-card">
-
-          <div className="stat-icon">
-            ✓
-          </div>
-
-          <strong className="stat-number">
-            12
-          </strong>
-
-          <span className="stat-label">
-            Goals Completed
-          </span>
-
-          <span className="stat-change">
-            ↑ 3 this week
-          </span>
-
-        </div>
-
-
-        <div className="stat-card">
-
-          <div className="stat-icon">
-            🔥
-          </div>
-
-          <strong className="stat-number">
-            7
-          </strong>
-
-          <span className="stat-label">
-            Study Streak
-          </span>
-
-          <span className="stat-change">
-            Keep going!
-          </span>
-
-        </div>
-
-
-        <div className="stat-card">
-
-          <div className="stat-icon">
-            ◷
-          </div>
-
-          <strong className="stat-number">
-            4.5h
-          </strong>
-
-          <span className="stat-label">
-            Study Time
-          </span>
-
-          <span className="stat-change">
-            ↑ 1.2h this week
-          </span>
+          <p>
+            Amazing! You've studied consistently for
+            <strong> 7 days.</strong> Complete today's goal
+            to keep your streak alive.
+          </p>
 
         </div>
 
       </section>
 
 
-      <section className="dashboard-cards">
+      {/* =========================
+          MAIN DASHBOARD GRID
+      ========================= */}
 
-        <div className="dashboard-card">
+      <section className="dashboard-main-grid">
 
-          <div className="card-heading">
+
+        {/* MICRO GOALS */}
+
+        <div className="dashboard-modern-card">
+
+          <div className="modern-card-heading">
 
             <div>
 
@@ -255,16 +292,15 @@ function DashboardPage({
           </div>
 
 
-          <div className="task-list">
+          <div className="dashboard-tasks">
 
-            <div className="task-item completed">
+            <div className="dashboard-task completed">
 
-              <div className="task-check">
+              <div className="dashboard-task-check">
                 ✓
               </div>
 
               <div>
-
                 <strong>
                   Read Chapter 4
                 </strong>
@@ -272,20 +308,22 @@ function DashboardPage({
                 <small>
                   Database Systems
                 </small>
-
               </div>
+
+              <span>
+                Done
+              </span>
 
             </div>
 
 
-            <div className="task-item completed">
+            <div className="dashboard-task completed">
 
-              <div className="task-check">
+              <div className="dashboard-task-check">
                 ✓
               </div>
 
               <div>
-
                 <strong>
                   Complete SQL exercises
                 </strong>
@@ -293,18 +331,20 @@ function DashboardPage({
                 <small>
                   Database Systems
                 </small>
-
               </div>
+
+              <span>
+                Done
+              </span>
 
             </div>
 
 
-            <div className="task-item">
+            <div className="dashboard-task">
 
-              <div className="task-check"></div>
+              <div className="dashboard-task-check"></div>
 
               <div>
-
                 <strong>
                   Review SQL joins
                 </strong>
@@ -312,18 +352,20 @@ function DashboardPage({
                 <small>
                   Database Systems
                 </small>
-
               </div>
+
+              <span>
+                Next
+              </span>
 
             </div>
 
 
-            <div className="task-item">
+            <div className="dashboard-task">
 
-              <div className="task-check"></div>
+              <div className="dashboard-task-check"></div>
 
               <div>
-
                 <strong>
                   Practice 10 questions
                 </strong>
@@ -331,8 +373,11 @@ function DashboardPage({
                 <small>
                   Database Systems
                 </small>
-
               </div>
+
+              <span>
+                Next
+              </span>
 
             </div>
 
@@ -341,14 +386,16 @@ function DashboardPage({
         </div>
 
 
-        <div className="dashboard-card">
+        {/* GOAL PROGRESS */}
 
-          <div className="card-heading">
+        <div className="dashboard-modern-card">
+
+          <div className="modern-card-heading">
 
             <div>
 
               <span>
-                GOALS
+                YOUR GOALS
               </span>
 
               <h2>
@@ -366,34 +413,37 @@ function DashboardPage({
           </div>
 
 
-          <div className="goal-progress-list">
+          <div className="dashboard-goal-list">
 
             {goals.slice(0, 4).map((goal) => (
 
               <div
-                className="goal-progress-item"
+                className="dashboard-goal"
                 key={goal.id}
               >
 
-                <div>
+                <div className="dashboard-goal-info">
+
+                  <div>
+
+                    <strong>
+                      {goal.title}
+                    </strong>
+
+                    <span>
+                      {goal.subject}
+                    </span>
+
+                  </div>
 
                   <strong>
-                    {goal.title}
+                    {goal.progress}%
                   </strong>
-
-                  <span>
-                    {goal.subject}
-                  </span>
 
                 </div>
 
 
-                <strong>
-                  {goal.progress}%
-                </strong>
-
-
-                <div className="mini-progress">
+                <div className="dashboard-goal-bar">
 
                   <span
                     style={{
@@ -414,43 +464,58 @@ function DashboardPage({
       </section>
 
 
-      <section className="dashboard-bottom">
+      {/* =========================
+          LOWER SECTION
+      ========================= */}
 
-        <div className="dashboard-card weekly-chart">
+      <section className="dashboard-lower-grid">
 
-          <div className="card-heading">
+
+        {/* STUDY ACTIVITY */}
+
+        <div className="dashboard-modern-card activity-chart-card">
+
+          <div className="modern-card-heading">
 
             <div>
 
               <span>
-                CONSISTENCY
+                THIS WEEK
               </span>
 
               <h2>
-                Weekly Study Activity
+                Study Activity
               </h2>
 
+            </div>
+
+            <div className="chart-total">
+              4.5h
             </div>
 
           </div>
 
 
-          <div className="simple-chart">
+          <div className="dashboard-chart">
 
             {[60, 80, 45, 90, 70, 55, 85].map(
               (height, index) => (
 
                 <div
-                  className="chart-column"
+                  className="dashboard-chart-column"
                   key={index}
                 >
 
-                  <div
-                    className="chart-bar"
-                    style={{
-                      height: `${height}%`,
-                    }}
-                  ></div>
+                  <div className="dashboard-chart-track">
+
+                    <div
+                      className="dashboard-chart-bar"
+                      style={{
+                        height: `${height}%`,
+                      }}
+                    ></div>
+
+                  </div>
 
                   <span>
                     {["M", "T", "W", "T", "F", "S", "S"][index]}
@@ -466,14 +531,16 @@ function DashboardPage({
         </div>
 
 
-        <div className="dashboard-card quick-actions">
+        {/* QUICK ACTIONS */}
 
-          <div className="card-heading">
+        <div className="dashboard-modern-card quick-action-card">
+
+          <div className="modern-card-heading">
 
             <div>
 
               <span>
-                ACTIONS
+                SHORTCUTS
               </span>
 
               <h2>
@@ -489,7 +556,11 @@ function DashboardPage({
             onClick={() => navigate("createGoal")}
           >
             <span>＋</span>
-            Create New Goal
+            <div>
+              <strong>Create New Goal</strong>
+              <small>Set a new academic target</small>
+            </div>
+            <b>→</b>
           </button>
 
 
@@ -497,7 +568,11 @@ function DashboardPage({
             onClick={() => navigate("activity")}
           >
             <span>◷</span>
-            Log Study Activity
+            <div>
+              <strong>Log Study Activity</strong>
+              <small>Record your study session</small>
+            </div>
+            <b>→</b>
           </button>
 
 
@@ -505,7 +580,11 @@ function DashboardPage({
             onClick={() => navigate("reports")}
           >
             <span>▥</span>
-            View Progress Report
+            <div>
+              <strong>Progress Report</strong>
+              <small>Review your study performance</small>
+            </div>
+            <b>→</b>
           </button>
 
         </div>
