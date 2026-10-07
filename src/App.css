@@ -2370,3 +2370,516 @@ button {
     display: none;
   }
 }
+/* =========================================
+   ACTIVITY PAGE
+========================================= */
+
+.activity-page {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px 10px 50px;
+}
+
+.activity-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 30px;
+  margin-bottom: 35px;
+}
+
+.activity-header h1 {
+  font-size: 36px;
+  margin: 0 0 10px;
+}
+
+.activity-total {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 18px 22px;
+  background: white;
+  border-radius: 18px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.07);
+}
+
+.activity-total > span {
+  font-size: 28px;
+}
+
+.activity-total strong {
+  display: block;
+  font-size: 24px;
+}
+
+.activity-total small {
+  display: block;
+  margin-top: 3px;
+  font-size: 11px;
+  opacity: 0.55;
+}
+
+/* Top cards */
+
+.activity-grid {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr;
+  gap: 22px;
+  margin-bottom: 25px;
+}
+
+.activity-form-card,
+.study-summary-card,
+.recent-activity-card {
+  background: white;
+  border-radius: 22px;
+  padding: 30px;
+  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.07);
+  box-sizing: border-box;
+}
+
+.card-heading {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 28px;
+}
+
+.activity-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 15px;
+  background: #f3e8ff;
+  color: #7c3aed;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+}
+
+.card-heading h2 {
+  margin: 0 0 5px;
+  font-size: 20px;
+}
+
+.card-heading p {
+  margin: 0;
+  font-size: 12px;
+  opacity: 0.55;
+}
+
+/* Form */
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 13px 14px;
+  border: 1px solid #e5e5e5;
+  border-radius: 12px;
+  box-sizing: border-box;
+  font-size: 13px;
+  outline: none;
+  background: #fafafa;
+}
+
+.form-group input:focus {
+  border-color: #a855f7;
+  background: white;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+}
+
+.save-activity-button {
+  width: 100%;
+  padding: 14px;
+  border: none;
+  border-radius: 13px;
+  background: #7c3aed;
+  color: white;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.save-activity-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(124, 58, 237, 0.25);
+}
+
+/* Summary */
+
+.study-summary-card {
+  background: linear-gradient(135deg, #f5f3ff, #faf5ff);
+  border: 1px solid #ede9fe;
+}
+
+.summary-label {
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 1.4px;
+  opacity: 0.55;
+}
+
+.study-summary-card h2 {
+  font-size: 25px;
+  margin: 20px 0 10px;
+}
+
+.study-summary-card > p:not(.summary-label) {
+  font-size: 13px;
+  line-height: 1.6;
+  opacity: 0.65;
+  margin-bottom: 30px;
+}
+
+.summary-line {
+  display: flex;
+  justify-content: space-between;
+  padding: 15px 0;
+  border-top: 1px solid rgba(0, 0, 0, 0.08);
+  font-size: 13px;
+}
+
+.summary-line strong {
+  font-weight: 700;
+}
+
+/* Recent activity */
+
+.recent-activity-card {
+  margin-bottom: 20px;
+}
+
+.recent-heading {
+  margin-bottom: 20px;
+}
+
+.recent-heading h2 {
+  margin: 0 0 5px;
+  font-size: 20px;
+}
+
+.recent-heading p {
+  margin: 0;
+  font-size: 12px;
+  opacity: 0.55;
+}
+
+.activity-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.activity-item {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 17px;
+  border-radius: 15px;
+  background: #fafafa;
+  border: 1px solid #eeeeee;
+  transition: 0.2s;
+}
+
+.activity-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.05);
+}
+
+.activity-circle {
+  width: 42px;
+  height: 42px;
+  border-radius: 13px;
+  background: #f3e8ff;
+  color: #7c3aed;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 19px;
+}
+
+.activity-info {
+  flex: 1;
+}
+
+.activity-info h3 {
+  margin: 0 0 5px;
+  font-size: 14px;
+}
+
+.activity-info p {
+  margin: 0;
+  font-size: 11px;
+  opacity: 0.5;
+}
+
+.activity-duration {
+  text-align: right;
+}
+
+.activity-duration strong {
+  display: block;
+  font-size: 14px;
+}
+
+.activity-duration span {
+  display: block;
+  margin-top: 4px;
+  font-size: 10px;
+  opacity: 0.5;
+}
+
+.empty-activity {
+  text-align: center;
+  padding: 45px 20px;
+}
+
+.empty-activity > div {
+  font-size: 35px;
+  opacity: 0.4;
+}
+
+.empty-activity h3 {
+  margin: 15px 0 5px;
+  font-size: 16px;
+}
+
+.empty-activity p {
+  margin: 0;
+  font-size: 12px;
+  opacity: 0.5;
+}
+
+/* Responsive */
+
+@media (max-width: 850px) {
+  .activity-header {
+    flex-direction: column;
+  }
+
+  .activity-total {
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .activity-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 600px) {
+  .activity-page {
+    padding: 15px 5px 40px;
+  }
+
+  .activity-form-card,
+  .study-summary-card,
+  .recent-activity-card {
+    padding: 20px;
+  }
+
+  .form-row {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+
+  .activity-duration {
+    display: none;
+  }
+}
+/* =========================================
+   REPORTS PAGE
+========================================= */
+
+.reports-page {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px 10px 50px;
+}
+
+.reports-header {
+  margin-bottom: 30px;
+}
+
+.reports-header h1 {
+  font-size: 36px;
+  margin: 0 0 10px;
+}
+
+/* Statistics */
+
+.report-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 18px;
+  margin-bottom: 25px;
+}
+
+.report-stat-card {
+  background: white;
+  border-radius: 19px;
+  padding: 22px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
+}
+
+.report-stat-icon {
+  width: 45px;
+  height: 45px;
+  border-radius: 14px;
+  background: #f3e8ff;
+  color: #7c3aed;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 19px;
+}
+
+.report-stat-card span {
+  display: block;
+  font-size: 11px;
+  opacity: 0.55;
+  margin-bottom: 5px;
+}
+
+.report-stat-card strong {
+  display: block;
+  font-size: 25px;
+}
+
+/* Main card */
+
+.reports-main-card {
+  background: white;
+  border-radius: 22px;
+  padding: 30px;
+  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.07);
+}
+
+.reports-card-heading {
+  margin-bottom: 30px;
+}
+
+.reports-card-heading h2 {
+  margin: 0 0 6px;
+  font-size: 21px;
+}
+
+.reports-card-heading p {
+  margin: 0;
+  font-size: 12px;
+  opacity: 0.55;
+}
+
+.goal-progress-list {
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+}
+
+.report-goal-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.report-goal-top h3 {
+  margin: 0 0 5px;
+  font-size: 14px;
+}
+
+.report-goal-top span {
+  font-size: 11px;
+  opacity: 0.5;
+}
+
+.report-goal-top strong {
+  font-size: 14px;
+}
+
+/* Progress */
+
+.report-progress-track {
+  width: 100%;
+  height: 9px;
+  border-radius: 20px;
+  background: #eeeeee;
+  overflow: hidden;
+}
+
+.report-progress-fill {
+  height: 100%;
+  border-radius: 20px;
+  background: linear-gradient(90deg, #7c3aed, #a855f7);
+  transition: width 0.5s ease;
+}
+
+/* Insight */
+
+.report-insight {
+  margin-top: 20px;
+  padding: 23px 25px;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  border-radius: 19px;
+  background: linear-gradient(135deg, #f5f3ff, #faf5ff);
+  border: 1px solid #ede9fe;
+}
+
+.insight-icon {
+  width: 45px;
+  height: 45px;
+  min-width: 45px;
+  border-radius: 14px;
+  background: #7c3aed;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.report-insight h2 {
+  margin: 0 0 5px;
+  font-size: 16px;
+}
+
+.report-insight p {
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.6;
+  opacity: 0.6;
+}
+
+/* Responsive */
+
+@media (max-width: 750px) {
+  .report-stats {
+    grid-template-columns: 1fr;
+  }
+
+  .reports-main-card {
+    padding: 20px;
+  }
+}

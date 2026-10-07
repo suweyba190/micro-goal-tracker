@@ -5,150 +5,126 @@ function ReportsPage({
   goals,
   setShowProfile,
 }) {
+  const totalGoals = goals.length;
 
-  const completedGoals =
-    goals.filter(
-      (goal) => goal.progress === 100
-    ).length;
-
+  const completedGoals = goals.filter(
+    (goal) => goal.progress === 100
+  ).length;
 
   const averageProgress =
-    goals.length > 0
+    totalGoals > 0
       ? Math.round(
-          goals.reduce(
-            (total, goal) =>
-              total + goal.progress,
-            0
-          ) / goals.length
+          goals.reduce((sum, goal) => sum + goal.progress, 0) /
+            totalGoals
         )
       : 0;
 
-
   return (
-
     <DashboardLayout
       navigate={navigate}
       setShowProfile={setShowProfile}
+      activePage="reports"
     >
+      <div className="reports-page">
 
-      <section className="goal-page-banner">
-
-        <div>
-
-          <span>
-            PROGRESS REPORT
-          </span>
-
-          <h2>
-            My Progress
-          </h2>
-
-          <p>
-            Review your academic goal progress
-            and study performance.
-          </p>
-
+        {/* Header */}
+        <div className="reports-header">
+          <div>
+            <p className="page-label">PROGRESS ANALYTICS</p>
+            <h1>Reports</h1>
+            <p className="page-description">
+              See how consistently you are progressing toward your academic
+              goals.
+            </p>
+          </div>
         </div>
 
-      </section>
+        {/* Statistics */}
+        <div className="report-stats">
 
-
-      <section className="report-summary">
-
-        <div className="report-card">
-
-          <strong>
-            {goals.length}
-          </strong>
-
-          <span>
-            Total Goals
-          </span>
-
-        </div>
-
-
-        <div className="report-card">
-
-          <strong>
-            {completedGoals}
-          </strong>
-
-          <span>
-            Completed Goals
-          </span>
-
-        </div>
-
-
-        <div className="report-card">
-
-          <strong>
-            {averageProgress}%
-          </strong>
-
-          <span>
-            Average Progress
-          </span>
-
-        </div>
-
-      </section>
-
-
-      <section className="report-goals">
-
-        <h2>
-          Goal Progress
-        </h2>
-
-
-        {goals.map((goal) => (
-
-          <div
-            className="report-goal"
-            key={goal.id}
-          >
-
+          <div className="report-stat-card">
+            <div className="report-stat-icon">🎯</div>
             <div>
-
-              <strong>
-                {goal.title}
-              </strong>
-
-              <span>
-                {goal.subject}
-              </span>
-
+              <span>Total Goals</span>
+              <strong>{totalGoals}</strong>
             </div>
-
-
-            <div className="report-progress">
-
-              <div className="mini-progress">
-
-                <span
-                  style={{
-                    width: `${goal.progress}%`
-                  }}
-                ></span>
-
-              </div>
-
-              <strong>
-                {goal.progress}%
-              </strong>
-
-            </div>
-
           </div>
 
-        ))}
+          <div className="report-stat-card">
+            <div className="report-stat-icon">✓</div>
+            <div>
+              <span>Completed</span>
+              <strong>{completedGoals}</strong>
+            </div>
+          </div>
 
-      </section>
+          <div className="report-stat-card">
+            <div className="report-stat-icon">↗</div>
+            <div>
+              <span>Average Progress</span>
+              <strong>{averageProgress}%</strong>
+            </div>
+          </div>
 
+        </div>
+
+        {/* Progress Overview */}
+        <div className="reports-main-card">
+
+          <div className="reports-card-heading">
+            <div>
+              <h2>Goal Progress</h2>
+              <p>
+                Your current progress across all academic goals.
+              </p>
+            </div>
+          </div>
+
+          <div className="goal-progress-list">
+
+            {goals.map((goal) => (
+              <div className="report-goal" key={goal.id}>
+
+                <div className="report-goal-top">
+                  <div>
+                    <h3>{goal.title}</h3>
+                    <span>{goal.subject}</span>
+                  </div>
+
+                  <strong>{goal.progress}%</strong>
+                </div>
+
+                <div className="report-progress-track">
+                  <div
+                    className="report-progress-fill"
+                    style={{
+                      width: `${goal.progress}%`,
+                    }}
+                  ></div>
+                </div>
+
+              </div>
+            ))}
+
+          </div>
+        </div>
+
+        {/* Study Insight */}
+        <div className="report-insight">
+          <div className="insight-icon">✦</div>
+
+          <div>
+            <h2>Small progress adds up.</h2>
+            <p>
+              Keep completing your micro-goals and recording your study
+              activities. Consistent small actions help you move closer to
+              completing your larger academic goals.
+            </p>
+          </div>
+        </div>
+
+      </div>
     </DashboardLayout>
-
   );
 }
 
