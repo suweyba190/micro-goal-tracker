@@ -6,190 +6,345 @@ function CreateGoalPage({
   setNewGoal,
   handleCreateGoal,
 }) {
-
   return (
-
     <DashboardLayout
       navigate={navigate}
       setShowProfile={() => {}}
     >
 
-      <section className="goal-page-banner">
+      <div className="create-goal-premium-page">
 
-        <div>
+        {/* =========================
+            HERO
+        ========================= */}
 
-          <span>
-            ACADEMIC GOAL
-          </span>
+        <section className="create-goal-hero">
 
-          <h2>
-            Create a New Goal
-          </h2>
+          <div className="create-goal-hero-content">
 
-          <p>
-            Set an academic target and break it
-            into smaller achievable steps.
-          </p>
+            <span className="create-goal-eyebrow">
+              NEW ACADEMIC GOAL
+            </span>
 
-        </div>
+            <h1>
+              Start with a target.
+              <br />
+              <span>Build your progress.</span>
+            </h1>
 
-      </section>
-
-
-      <section className="create-goal-section">
-
-        <form
-          className="create-goal-form"
-          onSubmit={handleCreateGoal}
-        >
-
-          <div className="form-group">
-
-            <label>
-              Goal Title
-            </label>
-
-            <input
-              type="text"
-              placeholder="e.g. Complete Database Assignment"
-              value={newGoal.title}
-              onChange={(e) =>
-                setNewGoal({
-                  ...newGoal,
-                  title: e.target.value
-                })
-              }
-            />
+            <p>
+              Define what you want to achieve, set a deadline,
+              and turn your academic target into smaller actions.
+            </p>
 
           </div>
 
 
-          <div className="form-group">
-
-            <label>
-              Subject
-            </label>
-
-            <input
-              type="text"
-              placeholder="e.g. Database Systems"
-              value={newGoal.subject}
-              onChange={(e) =>
-                setNewGoal({
-                  ...newGoal,
-                  subject: e.target.value
-                })
-              }
-            />
-
+          <div className="create-goal-hero-symbol">
+            <div>🎯</div>
+            <span>FOCUS</span>
           </div>
 
+        </section>
 
-          <div className="form-row">
 
-            <div className="form-group">
+        {/* =========================
+            FORM AREA
+        ========================= */}
 
-              <label>
-                Target Date
-              </label>
+        <section className="create-goal-layout">
 
-              <input
-                type="date"
-                value={newGoal.date}
-                onChange={(e) =>
-                  setNewGoal({
-                    ...newGoal,
-                    date: e.target.value
-                  })
-                }
-              />
+          <div className="create-goal-form-card">
+
+            <div className="create-goal-heading">
+
+              <div>
+                <span>GOAL DETAILS</span>
+
+                <h2>
+                  What do you want to achieve?
+                </h2>
+
+                <p>
+                  Fill in the details below to create your
+                  academic goal.
+                </p>
+              </div>
+
+              <div className="create-goal-step">
+                01
+              </div>
 
             </div>
 
 
-            <div className="form-group">
+            <form
+              className="create-goal-premium-form"
+              onSubmit={handleCreateGoal}
+            >
 
-              <label>
-                Priority
-              </label>
+              {/* TITLE */}
 
-              <select
-                value={newGoal.priority}
-                onChange={(e) =>
-                  setNewGoal({
-                    ...newGoal,
-                    priority: e.target.value
-                  })
-                }
-              >
+              <div className="premium-form-group">
 
-                <option>
-                  Low
-                </option>
+                <label>
+                  Goal Title
+                </label>
 
-                <option>
-                  Medium
-                </option>
+                <input
+                  type="text"
+                  placeholder="e.g. Complete Database Assignment"
+                  value={newGoal.title}
+                  onChange={(e) =>
+                    setNewGoal({
+                      ...newGoal,
+                      title: e.target.value
+                    })
+                  }
+                  required
+                />
 
-                <option>
-                  High
-                </option>
+                <small>
+                  Give your goal a clear and specific name.
+                </small>
 
-              </select>
+              </div>
+
+
+              {/* SUBJECT */}
+
+              <div className="premium-form-group">
+
+                <label>
+                  Subject
+                </label>
+
+                <input
+                  type="text"
+                  placeholder="e.g. Database Systems"
+                  value={newGoal.subject}
+                  onChange={(e) =>
+                    setNewGoal({
+                      ...newGoal,
+                      subject: e.target.value
+                    })
+                  }
+                  required
+                />
+
+              </div>
+
+
+              {/* DATE + PRIORITY */}
+
+              <div className="premium-form-row">
+
+                <div className="premium-form-group">
+
+                  <label>
+                    Target Date
+                  </label>
+
+                  <input
+                    type="date"
+                    value={newGoal.date}
+                    onChange={(e) =>
+                      setNewGoal({
+                        ...newGoal,
+                        date: e.target.value
+                      })
+                    }
+                    required
+                  />
+
+                </div>
+
+
+                <div className="premium-form-group">
+
+                  <label>
+                    Priority
+                  </label>
+
+                  <select
+                    value={newGoal.priority}
+                    onChange={(e) =>
+                      setNewGoal({
+                        ...newGoal,
+                        priority: e.target.value
+                      })
+                    }
+                  >
+
+                    <option>
+                      Low
+                    </option>
+
+                    <option>
+                      Medium
+                    </option>
+
+                    <option>
+                      High
+                    </option>
+
+                  </select>
+
+                </div>
+
+              </div>
+
+
+              {/* DESCRIPTION */}
+
+              <div className="premium-form-group">
+
+                <label>
+                  Description
+                </label>
+
+                <textarea
+                  placeholder="Describe what you want to achieve..."
+                  value={newGoal.description}
+                  onChange={(e) =>
+                    setNewGoal({
+                      ...newGoal,
+                      description: e.target.value
+                    })
+                  }
+                  rows="5"
+                />
+
+                <small>
+                  Add a little more detail about your target.
+                </small>
+
+              </div>
+
+
+              {/* ACTIONS */}
+
+              <div className="create-goal-actions">
+
+                <button
+                  type="button"
+                  className="create-goal-cancel"
+                  onClick={() =>
+                    navigate("goals")
+                  }
+                >
+                  ← Cancel
+                </button>
+
+
+                <button
+                  type="submit"
+                  className="create-goal-submit"
+                >
+                  Create Goal
+                  <span>→</span>
+                </button>
+
+              </div>
+
+            </form>
+
+          </div>
+
+
+          {/* =========================
+              SIDE INFORMATION
+          ========================= */}
+
+          <aside className="create-goal-side">
+
+            <div className="goal-side-card">
+
+              <div className="goal-side-icon">
+                ✦
+              </div>
+
+              <span>
+                WHY MICRO-GOALS?
+              </span>
+
+              <h2>
+                Big goals become easier when you start small.
+              </h2>
+
+              <p>
+                After creating your goal, break it into
+                smaller daily micro-goals that you can
+                complete one step at a time.
+              </p>
+
+              <div className="goal-side-line"></div>
+
+              <div className="goal-side-stat">
+
+                <strong>
+                  01
+                </strong>
+
+                <div>
+                  <b>
+                    Set your target
+                  </b>
+
+                  <small>
+                    Decide what you want to accomplish.
+                  </small>
+                </div>
+
+              </div>
+
+
+              <div className="goal-side-stat">
+
+                <strong>
+                  02
+                </strong>
+
+                <div>
+                  <b>
+                    Break it down
+                  </b>
+
+                  <small>
+                    Turn the goal into smaller actions.
+                  </small>
+                </div>
+
+              </div>
+
+
+              <div className="goal-side-stat">
+
+                <strong>
+                  03
+                </strong>
+
+                <div>
+                  <b>
+                    Track progress
+                  </b>
+
+                  <small>
+                    See how consistently you're improving.
+                  </small>
+                </div>
+
+              </div>
 
             </div>
 
-          </div>
+          </aside>
 
+        </section>
 
-          <div className="form-group">
-
-            <label>
-              Description
-            </label>
-
-            <textarea
-              placeholder="Describe what you want to achieve..."
-              value={newGoal.description}
-              onChange={(e) =>
-                setNewGoal({
-                  ...newGoal,
-                  description: e.target.value
-                })
-              }
-            />
-
-          </div>
-
-
-          <div className="form-actions">
-
-            <button
-              type="button"
-              className="secondary-button"
-              onClick={() =>
-                navigate("goals")
-              }
-            >
-              Cancel
-            </button>
-
-
-            <button
-              type="submit"
-              className="primary-button"
-            >
-              Create Goal
-            </button>
-
-          </div>
-
-        </form>
-
-      </section>
+      </div>
 
     </DashboardLayout>
-
   );
 }
 
