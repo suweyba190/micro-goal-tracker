@@ -1,3 +1,4 @@
+
 function RegisterPage({ navigate, handleRegister }) {
   return (
     <div className="auth-page">
@@ -13,15 +14,11 @@ function RegisterPage({ navigate, handleRegister }) {
         <div className="auth-overlay"></div>
 
         <div className="auth-brand">
-
           <div className="brand-icon">
             ✓
           </div>
-
           MicroGoal
-
         </div>
-
 
         <div className="auth-quote">
 
@@ -41,7 +38,6 @@ function RegisterPage({ navigate, handleRegister }) {
           </p>
 
         </div>
-
 
         <div className="auth-mini-stats">
 
@@ -64,7 +60,6 @@ function RegisterPage({ navigate, handleRegister }) {
 
       </div>
 
-
       {/* RIGHT SIDE */}
       <div className="auth-form-area">
 
@@ -75,13 +70,11 @@ function RegisterPage({ navigate, handleRegister }) {
           ← Back to home
         </button>
 
-
         <div className="auth-form">
 
           <div className="mobile-brand">
             <span>✓</span> MicroGoal
           </div>
-
 
           <div className="auth-heading">
 
@@ -99,7 +92,6 @@ function RegisterPage({ navigate, handleRegister }) {
 
           </div>
 
-
           <form
             className="register-form"
             onSubmit={handleRegister}
@@ -110,49 +102,56 @@ function RegisterPage({ navigate, handleRegister }) {
 
               <input
                 type="text"
+                name="full_name"
                 placeholder="Enter your full name"
+                autoComplete="name"
                 required
               />
             </label>
-
 
             <label>
               Email Address
 
               <input
                 type="email"
+                name="email"
                 placeholder="Enter your email"
+                autoComplete="email"
                 required
               />
             </label>
-
 
             <label>
               Password
 
               <input
                 type="password"
+                name="password"
                 placeholder="Create a password"
+                autoComplete="new-password"
+                minLength="8"
                 required
               />
             </label>
-
 
             <label>
               Confirm Password
 
               <input
                 type="password"
+                name="confirm_password"
                 placeholder="Confirm your password"
+                autoComplete="new-password"
+                minLength="8"
                 required
               />
             </label>
-
 
             <label className="checkbox-label">
 
               <input
                 type="checkbox"
+                name="terms"
                 required
               />
 
@@ -161,7 +160,6 @@ function RegisterPage({ navigate, handleRegister }) {
               </span>
 
             </label>
-
 
             <button
               type="submit"
@@ -172,12 +170,12 @@ function RegisterPage({ navigate, handleRegister }) {
 
           </form>
 
-
           <div className="auth-switch">
 
             Already have an account?
 
             <button
+              type="button"
               onClick={() => navigate("login")}
             >
               Sign in

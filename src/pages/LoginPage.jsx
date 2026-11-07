@@ -1,3 +1,4 @@
+
 function LoginPage({ navigate, handleLogin }) {
   return (
     <div className="auth-page">
@@ -20,7 +21,6 @@ function LoginPage({ navigate, handleLogin }) {
           MicroGoal
         </div>
 
-
         <div className="auth-quote">
 
           <div className="auth-small-label">
@@ -39,7 +39,6 @@ function LoginPage({ navigate, handleLogin }) {
           </p>
 
         </div>
-
 
         <div className="auth-mini-stats">
 
@@ -62,24 +61,22 @@ function LoginPage({ navigate, handleLogin }) {
 
       </div>
 
-
       {/* RIGHT SIDE */}
       <div className="auth-form-area">
 
         <button
+          type="button"
           className="back-home"
           onClick={() => navigate("home")}
         >
           ← Back to home
         </button>
 
-
         <div className="auth-form">
 
           <div className="mobile-brand">
             <span>✓</span> MicroGoal
           </div>
-
 
           <div className="auth-heading">
 
@@ -97,7 +94,6 @@ function LoginPage({ navigate, handleLogin }) {
 
           </div>
 
-
           <form
             className="register-form"
             onSubmit={handleLogin}
@@ -108,35 +104,39 @@ function LoginPage({ navigate, handleLogin }) {
 
               <input
                 type="email"
+                name="email"
                 placeholder="Enter your email"
+                autoComplete="email"
                 required
               />
             </label>
-
 
             <label>
               Password
 
               <input
                 type="password"
+                name="password"
                 placeholder="Enter your password"
+                autoComplete="current-password"
                 required
               />
             </label>
-
 
             <div className="form-options">
 
               <label className="checkbox-label">
 
-                <input type="checkbox" />
+                <input
+                  type="checkbox"
+                  name="remember"
+                />
 
                 <span>
                   Remember me
                 </span>
 
               </label>
-
 
               <button
                 type="button"
@@ -147,7 +147,6 @@ function LoginPage({ navigate, handleLogin }) {
 
             </div>
 
-
             <button
               type="submit"
               className="auth-submit"
@@ -157,12 +156,12 @@ function LoginPage({ navigate, handleLogin }) {
 
           </form>
 
-
           <div className="auth-switch">
 
             Don't have an account?
 
             <button
+              type="button"
               onClick={() => navigate("register")}
             >
               Create one

@@ -13,11 +13,13 @@ import ActivityPage from "./pages/ActivityPage";
 import ReportsPage from "./pages/ReportsPage";
 import ProfileModal from "./pages/ProfileModal";
 
+const API_URL = "http://127.0.0.1:5000";
+
 function App() {
   const [page, setPage] = useState("home");
   const [showProfile, setShowProfile] = useState(false);
+  const [currentStudent, setCurrentStudent] = useState(null);
 
-  // GOALS DATA
   const [goals, setGoals] = useState([
     {
       id: 1,
@@ -26,8 +28,7 @@ function App() {
       date: "Oct 08, 2026",
       priority: "High",
       progress: 75,
-      description:
-        "Complete the remaining database normalization and SQL exercises."
+      description: "Complete the remaining database normalization and SQL exercises."
     },
     {
       id: 2,
@@ -36,8 +37,7 @@ function App() {
       date: "Oct 10, 2026",
       priority: "Medium",
       progress: 50,
-      description:
-        "Review Power BI concepts and practice creating dashboards."
+      description: "Review Power BI concepts and practice creating dashboards."
     },
     {
       id: 3,
@@ -46,8 +46,7 @@ function App() {
       date: "Oct 12, 2026",
       priority: "High",
       progress: 30,
-      description:
-        "Study regression analysis and practice building prediction models."
+      description: "Study regression analysis and practice building prediction models."
     },
     {
       id: 4,
@@ -56,36 +55,17 @@ function App() {
       date: "Oct 20, 2026",
       priority: "High",
       progress: 100,
-      description:
-        "Continue developing and documenting the final year project."
+      description: "Continue developing and documenting the final year project."
     }
   ]);
 
-  // MICRO GOALS DATA
   const [microGoals, setMicroGoals] = useState([
-    {
-      id: 1,
-      title: "Read Chapter 4",
-      completed: true
-    },
-    {
-      id: 2,
-      title: "Complete normalization exercises",
-      completed: true
-    },
-    {
-      id: 3,
-      title: "Review SQL joins",
-      completed: false
-    },
-    {
-      id: 4,
-      title: "Practice 10 SQL questions",
-      completed: false
-    }
+    { id: 1, title: "Read Chapter 4", completed: true },
+    { id: 2, title: "Complete normalization exercises", completed: true },
+    { id: 3, title: "Review SQL joins", completed: false },
+    { id: 4, title: "Practice 10 SQL questions", completed: false }
   ]);
 
-  // ACTIVITY DATA
   const [activities, setActivities] = useState([
     {
       id: 1,
@@ -107,7 +87,6 @@ function App() {
     }
   ]);
 
-  // CREATE GOAL FORM
   const [newGoal, setNewGoal] = useState({
     title: "",
     subject: "",
@@ -116,14 +95,12 @@ function App() {
     description: ""
   });
 
-  // ACTIVITY FORM
   const [activityForm, setActivityForm] = useState({
     title: "",
     duration: "",
     date: ""
   });
 
-  // NAVIGATION
   const navigate = (destination) => {
     setPage(destination);
     setShowProfile(false);
@@ -134,20 +111,128 @@ function App() {
     });
   };
 
-  // REGISTER
-  const handleRegister = (e) => {
+  // REGISTER STUDENT
+  const handleRegister = async (e) => {
     e.preventDefault();
 
-    alert("Account created successfully!");
+    // Save the form reference BEFORE waiting for the backend.
+    const form = e.currentTarget;
+    const formData = new FormData(form);
 
-    navigate("login");
+    const full_name = String(
+      formData.get("full_name") || ""
+    ).trim();
+
+    const email = String(
+      formData.get("email") || ""
+    ).trim().toLowerCase();
+
+    const password = formData.get("password");
+    const confirmPassword = formData.get("confirm_password");
+
+    if (password !== confirmPassword) {
+      alert("Passwords do not match.");
+      return;
+    }
+
+    if (
+      typeof password !== "string" ||
+      password.length < 8
+    ) {
+      alert("Password must be at least 8 characters.");
+      return;
+    }
+
+    try {
+      const response = await fetch(`${API_URL}/api/register`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          full_name,
+          email,
+          password
+        })
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(
+          result.error || "Registration failed."
+        );
+      }
+
+      // Reset using the saved form reference.
+      form.reset();
+
+      alert("Account created successfully! You can now connect.");
+
+      navigate("login");
+
+    } catch (error) {
+      console.error("Registration error:", error);
+
+      alert(
+        error.message === "Failed to fetch"
+          ? "Could not connect to the backend. Make sure Flask is running."
+          : error.message
+      );
+    }
   };
 
-  // LOGIN
-  const handleLogin = (e) => {
+  // CONNECT STUDENT
+  const handleLogin = async (e) => {
     e.preventDefault();
 
-    navigate("dashboard");
+    // Save the form reference BEFORE waiting for the backend.
+    const form = e.currentTarget;
+    const formData = new FormData(form);
+
+    const email = String(
+      formData.get("email") || ""
+    ).trim().toLowerCase();
+
+    const password = formData.get("password");
+
+    try {
+      const response = await fetch(`${API_URL}/api/login`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          email,
+          password
+        })
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(
+          result.error || "Connection failed."
+        );
+      }
+
+      setCurrentStudent(result.student);
+
+      form.reset();
+
+      alert(`Welcome, ${result.student.full_name}!`);
+
+      navigate("dashboard");
+
+    } catch (error) {
+      console.error("Connection error:", error);
+
+      alert(
+        error.message === "Failed to fetch"
+          ? "Could not connect to the backend. Make sure Flask is running."
+          : error.message
+      );
+    }
   };
 
   // CREATE GOAL
@@ -167,8 +252,7 @@ function App() {
       priority: newGoal.priority,
       progress: 0,
       description:
-        newGoal.description ||
-        "Academic goal created by student."
+        newGoal.description || "Academic goal created by student."
     };
 
     setGoals((previousGoals) => [
@@ -187,7 +271,7 @@ function App() {
     navigate("goals");
   };
 
-  // COMPLETE OR UNCOMPLETE A MICRO-GOAL
+  // COMPLETE OR UNCOMPLETE MICRO-GOAL
   const toggleMicroGoal = (id) => {
     const date = new Date();
 
@@ -212,12 +296,10 @@ function App() {
     );
   };
 
-  // COUNT COMPLETED MICRO-GOALS
   const completedMicroGoals = microGoals.filter(
     (goal) => goal.completed
   ).length;
 
-  // GET UNIQUE COMPLETION DATES
   const completionDates = [
     ...new Set(
       microGoals
@@ -226,7 +308,7 @@ function App() {
     )
   ].sort();
 
-  // CALCULATE LONGEST STREAK
+  // LONGEST STREAK
   let runningStreak = 0;
   let longestStreak = 0;
   let previousDate = null;
@@ -255,8 +337,7 @@ function App() {
     previousDate = currentDate;
   });
 
-  // CALCULATE CURRENT STREAK
-  // Today's date is declared only ONCE in this section.
+  // CURRENT STREAK
   const today = new Date();
   today.setHours(0, 0, 0, 0);
 
@@ -283,7 +364,7 @@ function App() {
       ? runningStreak
       : 0;
 
-  // SUBMIT STUDY ACTIVITY
+  // SAVE STUDY ACTIVITY
   const handleActivitySubmit = (e) => {
     e.preventDefault();
 
@@ -315,12 +396,10 @@ function App() {
 
   return (
     <>
-      {/* HOME */}
       {page === "home" && (
         <HomePage navigate={navigate} />
       )}
 
-      {/* REGISTER */}
       {page === "register" && (
         <RegisterPage
           navigate={navigate}
@@ -328,7 +407,6 @@ function App() {
         />
       )}
 
-      {/* LOGIN */}
       {page === "login" && (
         <LoginPage
           navigate={navigate}
@@ -336,7 +414,6 @@ function App() {
         />
       )}
 
-      {/* DASHBOARD */}
       {page === "dashboard" && (
         <DashboardPage
           navigate={navigate}
@@ -346,10 +423,10 @@ function App() {
           longestStreak={longestStreak}
           completionDates={completionDates}
           microGoals={microGoals}
+          currentStudent={currentStudent}
         />
       )}
 
-      {/* GOALS */}
       {page === "goals" && (
         <GoalsPage
           navigate={navigate}
@@ -358,7 +435,6 @@ function App() {
         />
       )}
 
-      {/* CREATE GOAL */}
       {page === "createGoal" && (
         <CreateGoalPage
           navigate={navigate}
@@ -368,7 +444,6 @@ function App() {
         />
       )}
 
-      {/* MICRO GOALS */}
       {page === "microgoals" && (
         <MicroGoalsPage
           navigate={navigate}
@@ -379,7 +454,6 @@ function App() {
         />
       )}
 
-      {/* ACTIVITY */}
       {page === "activity" && (
         <ActivityPage
           navigate={navigate}
@@ -391,7 +465,6 @@ function App() {
         />
       )}
 
-      {/* REPORTS */}
       {page === "reports" && (
         <ReportsPage
           navigate={navigate}
@@ -400,12 +473,12 @@ function App() {
         />
       )}
 
-      {/* PROFILE */}
       {showProfile && (
         <ProfileModal
           close={() => setShowProfile(false)}
           logout={() => {
             setShowProfile(false);
+            setCurrentStudent(null);
             navigate("login");
           }}
         />
