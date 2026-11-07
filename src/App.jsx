@@ -28,7 +28,8 @@ function App() {
       date: "Oct 08, 2026",
       priority: "High",
       progress: 75,
-      description: "Complete the remaining database normalization and SQL exercises."
+      description:
+        "Complete the remaining database normalization and SQL exercises."
     },
     {
       id: 2,
@@ -37,7 +38,8 @@ function App() {
       date: "Oct 10, 2026",
       priority: "Medium",
       progress: 50,
-      description: "Review Power BI concepts and practice creating dashboards."
+      description:
+        "Review Power BI concepts and practice creating dashboards."
     },
     {
       id: 3,
@@ -46,7 +48,8 @@ function App() {
       date: "Oct 12, 2026",
       priority: "High",
       progress: 30,
-      description: "Study regression analysis and practice building prediction models."
+      description:
+        "Study regression analysis and practice building prediction models."
     },
     {
       id: 4,
@@ -55,15 +58,24 @@ function App() {
       date: "Oct 20, 2026",
       priority: "High",
       progress: 100,
-      description: "Continue developing and documenting the final year project."
+      description:
+        "Continue developing and documenting the final year project."
     }
   ]);
 
   const [microGoals, setMicroGoals] = useState([
     { id: 1, title: "Read Chapter 4", completed: true },
-    { id: 2, title: "Complete normalization exercises", completed: true },
+    {
+      id: 2,
+      title: "Complete normalization exercises",
+      completed: true
+    },
     { id: 3, title: "Review SQL joins", completed: false },
-    { id: 4, title: "Practice 10 SQL questions", completed: false }
+    {
+      id: 4,
+      title: "Practice 10 SQL questions",
+      completed: false
+    }
   ]);
 
   const [activities, setActivities] = useState([
@@ -115,7 +127,6 @@ function App() {
   const handleRegister = async (e) => {
     e.preventDefault();
 
-    // Save the form reference BEFORE waiting for the backend.
     const form = e.currentTarget;
     const formData = new FormData(form);
 
@@ -164,13 +175,13 @@ function App() {
         );
       }
 
-      // Reset using the saved form reference.
       form.reset();
 
-      alert("Account created successfully! You can now connect.");
+      alert(
+        "Account created successfully! You can now connect."
+      );
 
       navigate("login");
-
     } catch (error) {
       console.error("Registration error:", error);
 
@@ -186,7 +197,6 @@ function App() {
   const handleLogin = async (e) => {
     e.preventDefault();
 
-    // Save the form reference BEFORE waiting for the backend.
     const form = e.currentTarget;
     const formData = new FormData(form);
 
@@ -223,7 +233,6 @@ function App() {
       alert(`Welcome, ${result.student.full_name}!`);
 
       navigate("dashboard");
-
     } catch (error) {
       console.error("Connection error:", error);
 
@@ -235,40 +244,76 @@ function App() {
     }
   };
 
-  // CREATE GOAL
-  const handleCreateGoal = (e) => {
+  // CREATE GOAL AND SAVE IT TO SQLITE DATABASE
+  const handleCreateGoal = async (e) => {
     e.preventDefault();
 
-    if (!newGoal.title || !newGoal.subject || !newGoal.date) {
+    if (!currentStudent) {
+      alert("Please connect to your student account first.");
+      navigate("login");
+      return;
+    }
+
+    if (
+      !newGoal.title.trim() ||
+      !newGoal.subject.trim() ||
+      !newGoal.date
+    ) {
       alert("Please fill in all required fields.");
       return;
     }
 
-    const goal = {
-      id: Date.now(),
-      title: newGoal.title,
-      subject: newGoal.subject,
-      date: newGoal.date,
-      priority: newGoal.priority,
-      progress: 0,
-      description:
-        newGoal.description || "Academic goal created by student."
-    };
+    try {
+      const response = await fetch(`${API_URL}/api/goals`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          student_id: currentStudent.student_id,
+          title: newGoal.title.trim(),
+          subject: newGoal.subject.trim(),
+          date: newGoal.date,
+          priority: newGoal.priority,
+          description: newGoal.description.trim()
+        })
+      });
 
-    setGoals((previousGoals) => [
-      ...previousGoals,
-      goal
-    ]);
+      const result = await response.json();
 
-    setNewGoal({
-      title: "",
-      subject: "",
-      date: "",
-      priority: "Medium",
-      description: ""
-    });
+      if (!response.ok) {
+        throw new Error(
+          result.error || "Could not create your goal."
+        );
+      }
 
-    navigate("goals");
+      // Add the goal returned by the database to the page.
+      setGoals((previousGoals) => [
+        ...previousGoals,
+        result.goal
+      ]);
+
+      // Clear the form after successful database saving.
+      setNewGoal({
+        title: "",
+        subject: "",
+        date: "",
+        priority: "Medium",
+        description: ""
+      });
+
+      alert("Your goal has been saved successfully!");
+
+      navigate("goals");
+    } catch (error) {
+      console.error("Create goal error:", error);
+
+      alert(
+        error.message === "Failed to fetch"
+          ? "Could not connect to the backend. Make sure Flask is running."
+          : error.message
+      );
+    }
   };
 
   // COMPLETE OR UNCOMPLETE MICRO-GOAL

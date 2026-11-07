@@ -1,3 +1,4 @@
+
 import DashboardLayout from "../components/DashboardLayout";
 
 function CreateGoalPage({
@@ -11,15 +12,10 @@ function CreateGoalPage({
       navigate={navigate}
       setShowProfile={() => {}}
     >
-
       <div className="create-goal-premium-page">
 
-        {/* =========================
-            HERO
-        ========================= */}
-
+        {/* HERO */}
         <section className="create-goal-hero">
-
           <div className="create-goal-hero-content">
 
             <span className="create-goal-eyebrow">
@@ -39,19 +35,13 @@ function CreateGoalPage({
 
           </div>
 
-
           <div className="create-goal-hero-symbol">
             <div>🎯</div>
             <span>FOCUS</span>
           </div>
-
         </section>
 
-
-        {/* =========================
-            FORM AREA
-        ========================= */}
-
+        {/* FORM AREA */}
         <section className="create-goal-layout">
 
           <div className="create-goal-form-card">
@@ -77,19 +67,15 @@ function CreateGoalPage({
 
             </div>
 
-
             <form
               className="create-goal-premium-form"
               onSubmit={handleCreateGoal}
             >
 
               {/* TITLE */}
-
               <div className="premium-form-group">
 
-                <label>
-                  Goal Title
-                </label>
+                <label>Goal Title</label>
 
                 <input
                   type="text"
@@ -110,14 +96,10 @@ function CreateGoalPage({
 
               </div>
 
-
               {/* SUBJECT */}
-
               <div className="premium-form-group">
 
-                <label>
-                  Subject
-                </label>
+                <label>Subject</label>
 
                 <input
                   type="text"
@@ -134,16 +116,12 @@ function CreateGoalPage({
 
               </div>
 
-
               {/* DATE + PRIORITY */}
-
               <div className="premium-form-row">
 
                 <div className="premium-form-group">
 
-                  <label>
-                    Target Date
-                  </label>
+                  <label>Target Date</label>
 
                   <input
                     type="date"
@@ -159,12 +137,9 @@ function CreateGoalPage({
 
                 </div>
 
-
                 <div className="premium-form-group">
 
-                  <label>
-                    Priority
-                  </label>
+                  <label>Priority</label>
 
                   <select
                     value={newGoal.priority}
@@ -175,33 +150,19 @@ function CreateGoalPage({
                       })
                     }
                   >
-
-                    <option>
-                      Low
-                    </option>
-
-                    <option>
-                      Medium
-                    </option>
-
-                    <option>
-                      High
-                    </option>
-
+                    <option value="Low">Low</option>
+                    <option value="Medium">Medium</option>
+                    <option value="High">High</option>
                   </select>
 
                 </div>
 
               </div>
 
-
               {/* DESCRIPTION */}
-
               <div className="premium-form-group">
 
-                <label>
-                  Description
-                </label>
+                <label>Description</label>
 
                 <textarea
                   placeholder="Describe what you want to achieve..."
@@ -221,21 +182,16 @@ function CreateGoalPage({
 
               </div>
 
-
               {/* ACTIONS */}
-
               <div className="create-goal-actions">
 
                 <button
                   type="button"
                   className="create-goal-cancel"
-                  onClick={() =>
-                    navigate("goals")
-                  }
+                  onClick={() => navigate("goals")}
                 >
                   ← Cancel
                 </button>
-
 
                 <button
                   type="submit"
@@ -251,11 +207,7 @@ function CreateGoalPage({
 
           </div>
 
-
-          {/* =========================
-              SIDE INFORMATION
-          ========================= */}
-
+          {/* SIDE INFORMATION */}
           <aside className="create-goal-side">
 
             <div className="goal-side-card">
@@ -264,9 +216,7 @@ function CreateGoalPage({
                 ✦
               </div>
 
-              <span>
-                WHY MICRO-GOALS?
-              </span>
+              <span>WHY MICRO-GOALS?</span>
 
               <h2>
                 Big goals become easier when you start small.
@@ -282,14 +232,10 @@ function CreateGoalPage({
 
               <div className="goal-side-stat">
 
-                <strong>
-                  01
-                </strong>
+                <strong>01</strong>
 
                 <div>
-                  <b>
-                    Set your target
-                  </b>
+                  <b>Set your target</b>
 
                   <small>
                     Decide what you want to accomplish.
@@ -298,17 +244,12 @@ function CreateGoalPage({
 
               </div>
 
-
               <div className="goal-side-stat">
 
-                <strong>
-                  02
-                </strong>
+                <strong>02</strong>
 
                 <div>
-                  <b>
-                    Break it down
-                  </b>
+                  <b>Break it down</b>
 
                   <small>
                     Turn the goal into smaller actions.
@@ -317,17 +258,12 @@ function CreateGoalPage({
 
               </div>
 
-
               <div className="goal-side-stat">
 
-                <strong>
-                  03
-                </strong>
+                <strong>03</strong>
 
                 <div>
-                  <b>
-                    Track progress
-                  </b>
+                  <b>Track progress</b>
 
                   <small>
                     See how consistently you're improving.
@@ -343,7 +279,6 @@ function CreateGoalPage({
         </section>
 
       </div>
-
     </DashboardLayout>
   );
 }
