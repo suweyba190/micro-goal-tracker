@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import "./App.css";
 
@@ -12,18 +13,11 @@ import ActivityPage from "./pages/ActivityPage";
 import ReportsPage from "./pages/ReportsPage";
 import ProfileModal from "./pages/ProfileModal";
 
-
 function App() {
-
   const [page, setPage] = useState("home");
-
   const [showProfile, setShowProfile] = useState(false);
 
-
-  /* =========================
-     GOALS DATA
-  ========================= */
-
+  // GOALS DATA
   const [goals, setGoals] = useState([
     {
       id: 1,
@@ -35,7 +29,6 @@ function App() {
       description:
         "Complete the remaining database normalization and SQL exercises."
     },
-
     {
       id: 2,
       title: "Revise Power BI",
@@ -46,7 +39,6 @@ function App() {
       description:
         "Review Power BI concepts and practice creating dashboards."
     },
-
     {
       id: 3,
       title: "Study Regression",
@@ -57,7 +49,6 @@ function App() {
       description:
         "Study regression analysis and practice building prediction models."
     },
-
     {
       id: 4,
       title: "Final Year Project",
@@ -70,30 +61,23 @@ function App() {
     }
   ]);
 
-
-  /* =========================
-     MICRO GOALS DATA
-  ========================= */
-
+  // MICRO GOALS DATA
   const [microGoals, setMicroGoals] = useState([
     {
       id: 1,
       title: "Read Chapter 4",
       completed: true
     },
-
     {
       id: 2,
       title: "Complete normalization exercises",
       completed: true
     },
-
     {
       id: 3,
       title: "Review SQL joins",
       completed: false
     },
-
     {
       id: 4,
       title: "Practice 10 SQL questions",
@@ -101,11 +85,7 @@ function App() {
     }
   ]);
 
-
-  /* =========================
-     ACTIVITY DATA
-  ========================= */
-
+  // ACTIVITY DATA
   const [activities, setActivities] = useState([
     {
       id: 1,
@@ -113,14 +93,12 @@ function App() {
       duration: "1 hr 30 min",
       date: "Today"
     },
-
     {
       id: 2,
       title: "Business Intelligence",
       duration: "1 hr",
       date: "Yesterday"
     },
-
     {
       id: 3,
       title: "Final Year Project",
@@ -129,11 +107,7 @@ function App() {
     }
   ]);
 
-
-  /* =========================
-     CREATE GOAL FORM
-  ========================= */
-
+  // CREATE GOAL FORM
   const [newGoal, setNewGoal] = useState({
     title: "",
     subject: "",
@@ -142,310 +116,260 @@ function App() {
     description: ""
   });
 
-
-  /* =========================
-     ACTIVITY FORM
-  ========================= */
-
+  // ACTIVITY FORM
   const [activityForm, setActivityForm] = useState({
     title: "",
     duration: "",
     date: ""
   });
 
-
-  /* =========================
-     NAVIGATION
-  ========================= */
-
+  // NAVIGATION
   const navigate = (destination) => {
-
     setPage(destination);
-
     setShowProfile(false);
 
     window.scrollTo({
       top: 0,
       behavior: "smooth"
     });
-
   };
 
-
-  /* =========================
-     REGISTER
-  ========================= */
-
+  // REGISTER
   const handleRegister = (e) => {
-
     e.preventDefault();
 
     alert("Account created successfully!");
 
     navigate("login");
-
   };
 
-
-  /* =========================
-     LOGIN
-  ========================= */
-
+  // LOGIN
   const handleLogin = (e) => {
-
     e.preventDefault();
 
     navigate("dashboard");
-
   };
 
-
-  /* =========================
-     CREATE GOAL
-  ========================= */
-
+  // CREATE GOAL
   const handleCreateGoal = (e) => {
-
     e.preventDefault();
 
-
-    if (
-      !newGoal.title ||
-      !newGoal.subject ||
-      !newGoal.date
-    ) {
-
+    if (!newGoal.title || !newGoal.subject || !newGoal.date) {
       alert("Please fill in all required fields.");
-
       return;
     }
 
-
     const goal = {
-
       id: Date.now(),
-
       title: newGoal.title,
-
       subject: newGoal.subject,
-
       date: newGoal.date,
-
       priority: newGoal.priority,
-
       progress: 0,
-
       description:
         newGoal.description ||
         "Academic goal created by student."
-
     };
 
-
-    setGoals([
-      ...goals,
+    setGoals((previousGoals) => [
+      ...previousGoals,
       goal
     ]);
 
-
     setNewGoal({
-
       title: "",
       subject: "",
       date: "",
       priority: "Medium",
       description: ""
-
     });
 
-
     navigate("goals");
-
   };
 
-
-  /* =========================
-     MICRO GOAL TOGGLE
-  ========================= */
-
+  // COMPLETE OR UNCOMPLETE A MICRO-GOAL
   const toggleMicroGoal = (id) => {
+    const date = new Date();
 
-    setMicroGoals(
-      microGoals.map((goal) =>
+    const completionDate = [
+      date.getFullYear(),
+      String(date.getMonth() + 1).padStart(2, "0"),
+      String(date.getDate()).padStart(2, "0")
+    ].join("-");
+
+    setMicroGoals((previousGoals) =>
+      previousGoals.map((goal) =>
         goal.id === id
           ? {
               ...goal,
-              completed: !goal.completed
+              completed: !goal.completed,
+              completedAt: goal.completed
+                ? null
+                : completionDate
             }
           : goal
       )
     );
-
   };
 
+  // COUNT COMPLETED MICRO-GOALS
+  const completedMicroGoals = microGoals.filter(
+    (goal) => goal.completed
+  ).length;
 
-  /* =========================
-     COMPLETED MICRO GOALS
-  ========================= */
+  // GET UNIQUE COMPLETION DATES
+  const completionDates = [
+    ...new Set(
+      microGoals
+        .filter((goal) => goal.completed && goal.completedAt)
+        .map((goal) => goal.completedAt)
+    )
+  ].sort();
 
-  const completedMicroGoals =
-    microGoals.filter(
-      (goal) => goal.completed
-    ).length;
+  // CALCULATE LONGEST STREAK
+  let runningStreak = 0;
+  let longestStreak = 0;
+  let previousDate = null;
 
+  completionDates.forEach((dateString) => {
+    const [year, month, day] = dateString
+      .split("-")
+      .map(Number);
 
-  /* =========================
-     ACTIVITY SUBMIT
-  ========================= */
-
-  const handleActivitySubmit = (e) => {
-
-    e.preventDefault();
-
+    const currentDate = new Date(year, month - 1, day);
 
     if (
-      !activityForm.title ||
-      !activityForm.duration
+      previousDate &&
+      (currentDate - previousDate) / 86400000 === 1
     ) {
+      runningStreak++;
+    } else {
+      runningStreak = 1;
+    }
 
+    longestStreak = Math.max(
+      longestStreak,
+      runningStreak
+    );
+
+    previousDate = currentDate;
+  });
+
+  // CALCULATE CURRENT STREAK
+  // Today's date is declared only ONCE in this section.
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  const lastCompletion = completionDates.length
+    ? (() => {
+        const [year, month, day] = completionDates[
+          completionDates.length - 1
+        ].split("-").map(Number);
+
+        return new Date(year, month - 1, day);
+      })()
+    : null;
+
+  if (lastCompletion) {
+    lastCompletion.setHours(0, 0, 0, 0);
+  }
+
+  const daysSinceLastCompletion = lastCompletion
+    ? (today - lastCompletion) / 86400000
+    : Infinity;
+
+  const currentStreak =
+    daysSinceLastCompletion <= 1
+      ? runningStreak
+      : 0;
+
+  // SUBMIT STUDY ACTIVITY
+  const handleActivitySubmit = (e) => {
+    e.preventDefault();
+
+    if (!activityForm.title || !activityForm.duration) {
       alert("Please enter the activity and duration.");
-
       return;
     }
 
-
     const newActivity = {
-
       id: Date.now(),
-
       title: activityForm.title,
-
       duration: activityForm.duration,
-
-      date:
-        activityForm.date ||
-        "Today"
-
+      date: activityForm.date || "Today"
     };
 
-
-    setActivities([
+    setActivities((previousActivities) => [
       newActivity,
-      ...activities
+      ...previousActivities
     ]);
 
-
     setActivityForm({
-
       title: "",
       duration: "",
       date: ""
-
     });
 
-
     alert("Study activity saved successfully!");
-
   };
 
-
   return (
-
     <>
-
-      {/* =========================
-          HOME
-      ========================= */}
-
+      {/* HOME */}
       {page === "home" && (
-
-        <HomePage
-          navigate={navigate}
-        />
-
+        <HomePage navigate={navigate} />
       )}
 
-
-      {/* =========================
-          REGISTER
-      ========================= */}
-
+      {/* REGISTER */}
       {page === "register" && (
-
         <RegisterPage
           navigate={navigate}
           handleRegister={handleRegister}
         />
-
       )}
 
-
-      {/* =========================
-          LOGIN
-      ========================= */}
-
+      {/* LOGIN */}
       {page === "login" && (
-
         <LoginPage
           navigate={navigate}
           handleLogin={handleLogin}
         />
-
       )}
 
-
-      {/* =========================
-          DASHBOARD
-      ========================= */}
-
+      {/* DASHBOARD */}
       {page === "dashboard" && (
-
         <DashboardPage
           navigate={navigate}
           goals={goals}
           setShowProfile={setShowProfile}
+          currentStreak={currentStreak}
+          longestStreak={longestStreak}
+          completionDates={completionDates}
+          microGoals={microGoals}
         />
-
       )}
 
-
-      {/* =========================
-          GOALS
-      ========================= */}
-
+      {/* GOALS */}
       {page === "goals" && (
-
         <GoalsPage
           navigate={navigate}
           goals={goals}
           setShowProfile={setShowProfile}
         />
-
       )}
 
-
-      {/* =========================
-          CREATE GOAL
-      ========================= */}
-
+      {/* CREATE GOAL */}
       {page === "createGoal" && (
-
         <CreateGoalPage
           navigate={navigate}
           newGoal={newGoal}
           setNewGoal={setNewGoal}
           handleCreateGoal={handleCreateGoal}
         />
-
       )}
 
-
-      {/* =========================
-          MICRO GOALS
-      ========================= */}
-
+      {/* MICRO GOALS */}
       {page === "microgoals" && (
-
         <MicroGoalsPage
           navigate={navigate}
           microGoals={microGoals}
@@ -453,16 +377,10 @@ function App() {
           completedMicroGoals={completedMicroGoals}
           setShowProfile={setShowProfile}
         />
-
       )}
 
-
-      {/* =========================
-          ACTIVITY
-      ========================= */}
-
+      {/* ACTIVITY */}
       {page === "activity" && (
-
         <ActivityPage
           navigate={navigate}
           activities={activities}
@@ -471,54 +389,29 @@ function App() {
           handleActivitySubmit={handleActivitySubmit}
           setShowProfile={setShowProfile}
         />
-
       )}
 
-
-      {/* =========================
-          REPORTS
-      ========================= */}
-
+      {/* REPORTS */}
       {page === "reports" && (
-
         <ReportsPage
           navigate={navigate}
           goals={goals}
           setShowProfile={setShowProfile}
         />
-
       )}
 
-
-      {/* =========================
-          PROFILE
-      ========================= */}
-
+      {/* PROFILE */}
       {showProfile && (
-
         <ProfileModal
-
-          close={() =>
-            setShowProfile(false)
-          }
-
+          close={() => setShowProfile(false)}
           logout={() => {
-
             setShowProfile(false);
-
             navigate("login");
-
           }}
-
         />
-
       )}
-
     </>
-
   );
-
 }
-
 
 export default App;
