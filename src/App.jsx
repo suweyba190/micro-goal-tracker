@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import "./App.css";
 
 import HomePage from "./pages/HomePage";
@@ -123,6 +123,43 @@ function App() {
     });
   };
 
+  // RETRIEVE THE CONNECTED STUDENT'S GOALS FROM SQLITE
+  useEffect(() => {
+    if (!currentStudent) {
+      return;
+    }
+
+    const loadStudentGoals = async () => {
+      try {
+        const response = await fetch(
+          `${API_URL}/api/goals?student_id=${encodeURIComponent(
+            currentStudent.student_id
+          )}`
+        );
+
+        const result = await response.json();
+
+        if (!response.ok) {
+          throw new Error(
+            result.error || "Could not retrieve your goals."
+          );
+        }
+
+        setGoals(result.goals || []);
+
+        console.log("Student goals loaded:", result.goals);
+      } catch (error) {
+        console.error("Loading goals error:", error);
+
+        alert(
+          "Your account connected, but your saved goals could not be loaded. Please check that Flask is running."
+        );
+      }
+    };
+
+    loadStudentGoals();
+  }, [currentStudent]);
+
   // REGISTER STUDENT
   const handleRegister = async (e) => {
     e.preventDefault();
@@ -244,7 +281,7 @@ function App() {
     }
   };
 
-  // CREATE GOAL AND SAVE IT TO SQLITE DATABASE
+  // CREATE GOAL AND SAVE IT TO SQLITE
   const handleCreateGoal = async (e) => {
     e.preventDefault();
 
@@ -287,13 +324,11 @@ function App() {
         );
       }
 
-      // Add the goal returned by the database to the page.
       setGoals((previousGoals) => [
         ...previousGoals,
         result.goal
       ]);
 
-      // Clear the form after successful database saving.
       setNewGoal({
         title: "",
         subject: "",
@@ -524,6 +559,7 @@ function App() {
           logout={() => {
             setShowProfile(false);
             setCurrentStudent(null);
+            setGoals([]);
             navigate("login");
           }}
         />
