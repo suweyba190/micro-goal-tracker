@@ -1,4 +1,6 @@
+
 import sqlite3
+from datetime import date
 from pathlib import Path
 
 # Store the database inside the backend folder
@@ -6,10 +8,25 @@ DATABASE_PATH = Path(__file__).resolve().parent / "microgoal.db"
 
 
 def get_connection():
-    """Create a connection to the SQLite database."""
+    """Create a connection and safely check database migrations."""
     connection = sqlite3.connect(DATABASE_PATH)
     connection.row_factory = sqlite3.Row
     connection.execute("PRAGMA foreign_keys = ON")
+
+    # Safely add completed_at if it does not already exist.
+    columns = connection.execute(
+        "PRAGMA table_info(MicroGoal)"
+    ).fetchall()
+
+    if columns:
+        column_names = [column["name"] for column in columns]
+
+        if "completed_at" not in column_names:
+            connection.execute(
+                "ALTER TABLE MicroGoal ADD COLUMN completed_at TEXT"
+            )
+            connection.commit()
+
     return connection
 
 
@@ -49,6 +66,7 @@ def create_tables():
                 description TEXT,
                 is_completed INTEGER NOT NULL DEFAULT 0,
                 created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                completed_at TEXT,
                 FOREIGN KEY (goal_id)
                     REFERENCES Goal(goal_id)
                     ON DELETE CASCADE
@@ -82,7 +100,20 @@ def create_tables():
             );
         """)
 
+        # Also handle existing databases whose tables already existed.
+        columns = connection.execute(
+            "PRAGMA table_info(MicroGoal)"
+        ).fetchall()
+
+        column_names = [column["name"] for column in columns]
+
+        if "completed_at" not in column_names:
+            connection.execute(
+                "ALTER TABLE MicroGoal ADD COLUMN completed_at TEXT"
+            )
+
         connection.commit()
+
     finally:
         connection.close()
 

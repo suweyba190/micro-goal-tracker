@@ -2,6 +2,7 @@
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 from werkzeug.security import generate_password_hash, check_password_hash
+from datetime import date
 import sqlite3
 
 from database import get_connection
@@ -36,25 +37,14 @@ def register():
     email = str(data.get("email", "")).strip().lower()
     password = data.get("password", "")
 
-    if (
-        not full_name
-        or not email
-        or not isinstance(password, str)
-        or not password.strip()
-    ):
-        return jsonify({
-            "error": "Full name, email and password are required."
-        }), 400
+    if not full_name or not email or not isinstance(password, str) or not password.strip():
+        return jsonify({"error": "Full name, email and password are required."}), 400
 
     if "@" not in email or email.startswith("@") or email.endswith("@"):
-        return jsonify({
-            "error": "Please enter a valid email address."
-        }), 400
+        return jsonify({"error": "Please enter a valid email address."}), 400
 
     if len(password) < 8:
-        return jsonify({
-            "error": "Password must be at least 8 characters."
-        }), 400
+        return jsonify({"error": "Password must be at least 8 characters."}), 400
 
     password_hash = generate_password_hash(password)
     connection = get_connection()
@@ -67,7 +57,6 @@ def register():
             """,
             (full_name, email, password_hash)
         )
-
         connection.commit()
 
         return jsonify({
@@ -76,9 +65,7 @@ def register():
         }), 201
 
     except sqlite3.IntegrityError:
-        return jsonify({
-            "error": "This email is already registered."
-        }), 409
+        return jsonify({"error": "This email is already registered."}), 409
 
     finally:
         connection.close()
@@ -92,14 +79,8 @@ def login():
     email = str(data.get("email", "")).strip().lower()
     password = data.get("password", "")
 
-    if (
-        not email
-        or not isinstance(password, str)
-        or not password.strip()
-    ):
-        return jsonify({
-            "error": "Email and password are required."
-        }), 400
+    if not email or not isinstance(password, str) or not password.strip():
+        return jsonify({"error": "Email and password are required."}), 400
 
     connection = get_connection()
 
@@ -113,12 +94,8 @@ def login():
             (email,)
         ).fetchone()
 
-        if student is None or not check_password_hash(
-            student["password_hash"], password
-        ):
-            return jsonify({
-                "error": "Invalid email or password."
-            }), 401
+        if student is None or not check_password_hash(student["password_hash"], password):
+            return jsonify({"error": "Invalid email or password."}), 401
 
         return jsonify({
             "message": "Connection successful!",
@@ -142,7 +119,7 @@ def get_student_id(value):
         return None
 
 
-# HELPER: FORMAT GOAL FOR REACT
+# HELPER: FORMAT ACADEMIC GOAL
 def format_goal(goal):
     return {
         "id": goal["goal_id"],
@@ -153,6 +130,19 @@ def format_goal(goal):
         "description": goal["description"] or "",
         "progress": 100 if goal["status"] == "Completed" else 0,
         "status": goal["status"]
+    }
+
+
+# HELPER: FORMAT MICRO-GOAL
+def format_micro_goal(micro_goal):
+    return {
+        "id": micro_goal["micro_goal_id"],
+        "goalId": micro_goal["goal_id"],
+        "goalTitle": micro_goal["goal_title"],
+        "title": micro_goal["title"],
+        "description": micro_goal["description"] or "",
+        "completed": bool(micro_goal["is_completed"]),
+        "completedAt": micro_goal["completed_at"]
     }
 
 
@@ -169,19 +159,13 @@ def create_goal():
     priority = str(data.get("priority", "Medium")).strip()
 
     if not student_id:
-        return jsonify({
-            "error": "A valid student ID is required."
-        }), 400
+        return jsonify({"error": "A valid student ID is required."}), 400
 
     if not title or not subject or not deadline:
-        return jsonify({
-            "error": "Goal title, subject and deadline are required."
-        }), 400
+        return jsonify({"error": "Goal title, subject and deadline are required."}), 400
 
     if priority not in ["Low", "Medium", "High"]:
-        return jsonify({
-            "error": "Priority must be Low, Medium or High."
-        }), 400
+        return jsonify({"error": "Priority must be Low, Medium or High."}), 400
 
     connection = get_connection()
 
@@ -192,9 +176,7 @@ def create_goal():
         ).fetchone()
 
         if student is None:
-            return jsonify({
-                "error": "Student account was not found."
-            }), 404
+            return jsonify({"error": "Student account was not found."}), 404
 
         cursor = connection.execute(
             """
@@ -202,24 +184,13 @@ def create_goal():
             (student_id, title, description, course_name, deadline, priority)
             VALUES (?, ?, ?, ?, ?, ?)
             """,
-            (
-                student_id,
-                title,
-                description,
-                subject,
-                deadline,
-                priority
-            )
+            (student_id, title, description, subject, deadline, priority)
         )
 
         connection.commit()
 
         saved_goal = connection.execute(
-            """
-            SELECT *
-            FROM Goal
-            WHERE goal_id = ?
-            """,
+            "SELECT * FROM Goal WHERE goal_id = ?",
             (cursor.lastrowid,)
         ).fetchone()
 
@@ -238,9 +209,7 @@ def get_goals():
     student_id = get_student_id(request.args.get("student_id"))
 
     if not student_id:
-        return jsonify({
-            "error": "A valid student ID is required."
-        }), 400
+        return jsonify({"error": "A valid student ID is required."}), 400
 
     connection = get_connection()
 
@@ -251,9 +220,7 @@ def get_goals():
         ).fetchone()
 
         if student is None:
-            return jsonify({
-                "error": "Student account was not found."
-            }), 404
+            return jsonify({"error": "Student account was not found."}), 404
 
         goals = connection.execute(
             """
@@ -273,17 +240,14 @@ def get_goals():
         connection.close()
 
 
-# UPDATE AN EXISTING GOAL
+# UPDATE AN EXISTING ACADEMIC GOAL
 @app.route("/api/goals/<int:goal_id>", methods=["PUT"])
 def update_goal(goal_id):
     data = request.get_json(silent=True) or {}
-
     student_id = get_student_id(data.get("student_id"))
 
     if not student_id:
-        return jsonify({
-            "error": "A valid student ID is required."
-        }), 400
+        return jsonify({"error": "A valid student ID is required."}), 400
 
     connection = get_connection()
 
@@ -298,63 +262,32 @@ def update_goal(goal_id):
         ).fetchone()
 
         if existing_goal is None:
-            return jsonify({
-                "error": "Goal not found for this student."
-            }), 404
+            return jsonify({"error": "Goal not found for this student."}), 404
 
         title = str(data.get("title", existing_goal["title"])).strip()
-        description = str(
-            data.get("description", existing_goal["description"] or "")
-        ).strip()
-        subject = str(
-            data.get("subject", existing_goal["course_name"] or "")
-        ).strip()
-        deadline = str(
-            data.get("date", existing_goal["deadline"] or "")
-        ).strip()
-        priority = str(
-            data.get("priority", existing_goal["priority"])
-        ).strip()
-        status = str(
-            data.get("status", existing_goal["status"])
-        ).strip()
+        description = str(data.get("description", existing_goal["description"] or "")).strip()
+        subject = str(data.get("subject", existing_goal["course_name"] or "")).strip()
+        deadline = str(data.get("date", existing_goal["deadline"] or "")).strip()
+        priority = str(data.get("priority", existing_goal["priority"])).strip()
+        status = str(data.get("status", existing_goal["status"])).strip()
 
         if not title or not subject or not deadline:
-            return jsonify({
-                "error": "Goal title, subject and deadline are required."
-            }), 400
+            return jsonify({"error": "Goal title, subject and deadline are required."}), 400
 
         if priority not in ["Low", "Medium", "High"]:
-            return jsonify({
-                "error": "Priority must be Low, Medium or High."
-            }), 400
+            return jsonify({"error": "Priority must be Low, Medium or High."}), 400
 
         if status not in ["In Progress", "Completed"]:
-            return jsonify({
-                "error": "Status must be In Progress or Completed."
-            }), 400
+            return jsonify({"error": "Status must be In Progress or Completed."}), 400
 
         connection.execute(
             """
             UPDATE Goal
-            SET title = ?,
-                description = ?,
-                course_name = ?,
-                deadline = ?,
-                priority = ?,
-                status = ?
+            SET title = ?, description = ?, course_name = ?,
+                deadline = ?, priority = ?, status = ?
             WHERE goal_id = ? AND student_id = ?
             """,
-            (
-                title,
-                description,
-                subject,
-                deadline,
-                priority,
-                status,
-                goal_id,
-                student_id
-            )
+            (title, description, subject, deadline, priority, status, goal_id, student_id)
         )
 
         connection.commit()
@@ -373,15 +306,13 @@ def update_goal(goal_id):
         connection.close()
 
 
-# DELETE A GOAL
+# DELETE AN ACADEMIC GOAL
 @app.route("/api/goals/<int:goal_id>", methods=["DELETE"])
 def delete_goal(goal_id):
     student_id = get_student_id(request.args.get("student_id"))
 
     if not student_id:
-        return jsonify({
-            "error": "A valid student ID is required."
-        }), 400
+        return jsonify({"error": "A valid student ID is required."}), 400
 
     connection = get_connection()
 
@@ -395,15 +326,207 @@ def delete_goal(goal_id):
         )
 
         if cursor.rowcount == 0:
-            return jsonify({
-                "error": "Goal not found for this student."
-            }), 404
+            return jsonify({"error": "Goal not found for this student."}), 404
 
         connection.commit()
 
+        return jsonify({"message": "Goal deleted successfully!"}), 200
+
+    finally:
+        connection.close()
+
+
+# CREATE A MICRO-GOAL
+@app.route("/api/micro-goals", methods=["POST"])
+def create_micro_goal():
+    data = request.get_json(silent=True) or {}
+
+    student_id = get_student_id(data.get("student_id"))
+    goal_id = get_student_id(data.get("goal_id"))
+    title = str(data.get("title", "")).strip()
+    description = str(data.get("description", "")).strip()
+
+    if not student_id or not goal_id:
+        return jsonify({"error": "A valid student ID and academic goal ID are required."}), 400
+
+    if not title:
+        return jsonify({"error": "Micro-goal title is required."}), 400
+
+    connection = get_connection()
+
+    try:
+        parent_goal = connection.execute(
+            """
+            SELECT goal_id
+            FROM Goal
+            WHERE goal_id = ? AND student_id = ?
+            """,
+            (goal_id, student_id)
+        ).fetchone()
+
+        if parent_goal is None:
+            return jsonify({"error": "Academic goal not found for this student."}), 404
+
+        cursor = connection.execute(
+            """
+            INSERT INTO MicroGoal (goal_id, title, description)
+            VALUES (?, ?, ?)
+            """,
+            (goal_id, title, description)
+        )
+
+        connection.commit()
+
+        saved_micro_goal = connection.execute(
+            """
+            SELECT mg.*, g.title AS goal_title
+            FROM MicroGoal mg
+            JOIN Goal g ON mg.goal_id = g.goal_id
+            WHERE mg.micro_goal_id = ?
+            """,
+            (cursor.lastrowid,)
+        ).fetchone()
+
         return jsonify({
-            "message": "Goal deleted successfully!"
+            "message": "Micro-goal created successfully!",
+            "micro_goal": format_micro_goal(saved_micro_goal)
+        }), 201
+
+    finally:
+        connection.close()
+
+
+# GET MICRO-GOALS FOR ONE STUDENT
+@app.route("/api/micro-goals", methods=["GET"])
+def get_micro_goals():
+    student_id = get_student_id(request.args.get("student_id"))
+
+    if not student_id:
+        return jsonify({"error": "A valid student ID is required."}), 400
+
+    connection = get_connection()
+
+    try:
+        student = connection.execute(
+            "SELECT student_id FROM Student WHERE student_id = ?",
+            (student_id,)
+        ).fetchone()
+
+        if student is None:
+            return jsonify({"error": "Student account was not found."}), 404
+
+        micro_goals = connection.execute(
+            """
+            SELECT mg.*, g.title AS goal_title
+            FROM MicroGoal mg
+            JOIN Goal g ON mg.goal_id = g.goal_id
+            WHERE g.student_id = ?
+            ORDER BY mg.created_at DESC
+            """,
+            (student_id,)
+        ).fetchall()
+
+        return jsonify({
+            "micro_goals": [
+                format_micro_goal(micro_goal)
+                for micro_goal in micro_goals
+            ]
         }), 200
+
+    finally:
+        connection.close()
+
+
+# MARK A MICRO-GOAL COMPLETE OR INCOMPLETE
+@app.route("/api/micro-goals/<int:micro_goal_id>", methods=["PUT"])
+def update_micro_goal(micro_goal_id):
+    data = request.get_json(silent=True) or {}
+
+    student_id = get_student_id(data.get("student_id"))
+
+    if not student_id:
+        return jsonify({"error": "A valid student ID is required."}), 400
+
+    if "completed" not in data or not isinstance(data["completed"], bool):
+        return jsonify({"error": "A true or false completion value is required."}), 400
+
+    connection = get_connection()
+
+    try:
+        existing_micro_goal = connection.execute(
+            """
+            SELECT mg.micro_goal_id
+            FROM MicroGoal mg
+            JOIN Goal g ON mg.goal_id = g.goal_id
+            WHERE mg.micro_goal_id = ? AND g.student_id = ?
+            """,
+            (micro_goal_id, student_id)
+        ).fetchone()
+
+        if existing_micro_goal is None:
+            return jsonify({"error": "Micro-goal not found for this student."}), 404
+
+        completed = data["completed"]
+        completed_at = date.today().isoformat() if completed else None
+
+        connection.execute(
+            """
+            UPDATE MicroGoal
+            SET is_completed = ?, completed_at = ?
+            WHERE micro_goal_id = ?
+            """,
+            (1 if completed else 0, completed_at, micro_goal_id)
+        )
+
+        connection.commit()
+
+        updated_micro_goal = connection.execute(
+            """
+            SELECT mg.*, g.title AS goal_title
+            FROM MicroGoal mg
+            JOIN Goal g ON mg.goal_id = g.goal_id
+            WHERE mg.micro_goal_id = ?
+            """,
+            (micro_goal_id,)
+        ).fetchone()
+
+        return jsonify({
+            "message": "Micro-goal updated successfully!",
+            "micro_goal": format_micro_goal(updated_micro_goal)
+        }), 200
+
+    finally:
+        connection.close()
+
+
+# DELETE A MICRO-GOAL
+@app.route("/api/micro-goals/<int:micro_goal_id>", methods=["DELETE"])
+def delete_micro_goal(micro_goal_id):
+    student_id = get_student_id(request.args.get("student_id"))
+
+    if not student_id:
+        return jsonify({"error": "A valid student ID is required."}), 400
+
+    connection = get_connection()
+
+    try:
+        cursor = connection.execute(
+            """
+            DELETE FROM MicroGoal
+            WHERE micro_goal_id = ?
+            AND goal_id IN (
+                SELECT goal_id FROM Goal WHERE student_id = ?
+            )
+            """,
+            (micro_goal_id, student_id)
+        )
+
+        if cursor.rowcount == 0:
+            return jsonify({"error": "Micro-goal not found for this student."}), 404
+
+        connection.commit()
+
+        return jsonify({"message": "Micro-goal deleted successfully!"}), 200
 
     finally:
         connection.close()
