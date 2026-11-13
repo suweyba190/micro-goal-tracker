@@ -13,7 +13,6 @@ def get_connection():
     connection.row_factory = sqlite3.Row
     connection.execute("PRAGMA foreign_keys = ON")
 
-    # Safely add completed_at if it does not already exist.
     columns = connection.execute(
         "PRAGMA table_info(MicroGoal)"
     ).fetchall()
@@ -31,7 +30,7 @@ def get_connection():
 
 
 def create_tables():
-    """Create the main tables for the MicroGoal Tracker."""
+    """Create all MicroGoal Tracker database tables."""
     connection = get_connection()
 
     try:
@@ -98,9 +97,49 @@ def create_tables():
                     REFERENCES Student(student_id)
                     ON DELETE CASCADE
             );
+
+            CREATE TABLE IF NOT EXISTS PartnerRequest (
+                request_id INTEGER PRIMARY KEY AUTOINCREMENT,
+                sender_id INTEGER NOT NULL,
+                receiver_id INTEGER NOT NULL,
+                status TEXT NOT NULL DEFAULT 'Pending',
+                created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+                FOREIGN KEY (sender_id)
+                    REFERENCES Student(student_id)
+                    ON DELETE CASCADE,
+
+                FOREIGN KEY (receiver_id)
+                    REFERENCES Student(student_id)
+                    ON DELETE CASCADE,
+
+                UNIQUE(sender_id, receiver_id),
+
+                CHECK(sender_id != receiver_id),
+
+                CHECK(status IN ('Pending', 'Accepted', 'Rejected'))
+            );
+
+            CREATE TABLE IF NOT EXISTS StudyPartnership (
+                partnership_id INTEGER PRIMARY KEY AUTOINCREMENT,
+                student_one_id INTEGER NOT NULL,
+                student_two_id INTEGER NOT NULL,
+                created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+                FOREIGN KEY (student_one_id)
+                    REFERENCES Student(student_id)
+                    ON DELETE CASCADE,
+
+                FOREIGN KEY (student_two_id)
+                    REFERENCES Student(student_id)
+                    ON DELETE CASCADE,
+
+                UNIQUE(student_one_id, student_two_id),
+
+                CHECK(student_one_id < student_two_id)
+            );
         """)
 
-        # Also handle existing databases whose tables already existed.
         columns = connection.execute(
             "PRAGMA table_info(MicroGoal)"
         ).fetchall()

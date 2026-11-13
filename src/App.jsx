@@ -11,6 +11,7 @@ import CreateGoalPage from "./pages/CreateGoalPage";
 import MicroGoalsPage from "./pages/MicroGoalsPage";
 import ActivityPage from "./pages/ActivityPage";
 import ReportsPage from "./pages/ReportsPage";
+import StreakPartnersPage from "./pages/StreakPartnersPage";
 import ProfileModal from "./pages/ProfileModal";
 
 const API_URL = "http://127.0.0.1:5000";
@@ -72,7 +73,7 @@ function App() {
 
   // LOAD THE CONNECTED STUDENT'S ACADEMIC GOALS
   useEffect(() => {
-if (!currentStudent) return;
+    if (!currentStudent) return;
 
     const loadStudentGoals = async () => {
       try {
@@ -125,10 +126,10 @@ if (!currentStudent) return;
 
     loadMicroGoals();
   }, [currentStudent]);
-// LOAD THE CONNECTED STUDENT'S SAVED STUDY ACTIVITIES
-useEffect(() => {
-  if (!currentStudent) return;
-  
+
+  // LOAD THE CONNECTED STUDENT'S SAVED STUDY ACTIVITIES
+  useEffect(() => {
+    if (!currentStudent) return;
 
     const loadActivities = async () => {
       try {
@@ -656,7 +657,14 @@ useEffect(() => {
           goals={goals}
           microGoals={microGoals}
           activities={activities}
-    
+          setShowProfile={setShowProfile}
+        />
+      )}
+
+      {page === "partners" && (
+        <StreakPartnersPage
+          navigate={navigate}
+          currentStudent={currentStudent}
           setShowProfile={setShowProfile}
         />
       )}
