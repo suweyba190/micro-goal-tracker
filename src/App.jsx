@@ -15,6 +15,32 @@ import ProfileModal from "./pages/ProfileModal";
 
 const API_URL = "http://127.0.0.1:5000";
 
+// Convert entries such as "1 hr 30 min", "2 hrs", "90 min"
+// and "1h30m" into a number of minutes for the database.
+function parseDurationToMinutes(value) {
+  const text = String(value || "").trim().toLowerCase();
+
+  const pattern = /(\d+(?:\.\d+)?)\s*(hours?|hrs?|hr|h|minutes?|mins?|min|m)/g;
+  const matches = [...text.matchAll(pattern)];
+
+  if (matches.length === 0) return null;
+
+  const leftover = text.replace(pattern, "").replace(/[\s,]+/g, "");
+
+  if (leftover) return null;
+
+  const totalMinutes = matches.reduce((total, match) => {
+    const amount = Number(match[1]);
+    const unit = match[2];
+
+    return total + (unit.startsWith("h") ? amount * 60 : amount);
+  }, 0);
+
+  return Number.isFinite(totalMinutes) && totalMinutes > 0
+    ? Math.round(totalMinutes)
+    : null;
+}
+
 function App() {
   const [page, setPage] = useState("home");
   const [showProfile, setShowProfile] = useState(false);
@@ -22,12 +48,7 @@ function App() {
 
   const [goals, setGoals] = useState([]);
   const [microGoals, setMicroGoals] = useState([]);
-
-  const [activities, setActivities] = useState([
-    { id: 1, title: "Database Systems", duration: "1 hr 30 min", date: "Today" },
-    { id: 2, title: "Business Intelligence", duration: "1 hr", date: "Yesterday" },
-    { id: 3, title: "Final Year Project", duration: "2 hrs", date: "Sep 30, 2026" }
-  ]);
+  const [activities, setActivities] = useState([]);
 
   const [newGoal, setNewGoal] = useState({
     title: "",
@@ -103,6 +124,37 @@ function App() {
     };
 
     loadMicroGoals();
+  }, [currentStudent]);
+
+  // LOAD THE CONNECTED STUDENT'S SAVED STUDY ACTIVITIES
+  useEffect(() => {
+    if (!currentStudent) {
+      setActivities([]);
+      return;
+    }
+
+    const loadActivities = async () => {
+      try {
+        const response = await fetch(
+          `${API_URL}/api/activities?student_id=${encodeURIComponent(currentStudent.student_id)}`
+        );
+
+        const result = await response.json();
+
+        if (!response.ok) {
+          throw new Error(result.error || "Could not retrieve your study activities.");
+        }
+
+        setActivities(result.activities || []);
+        console.log("Student activities loaded:", result.activities);
+
+      } catch (error) {
+        console.error("Loading activities error:", error);
+        alert("Your study activities could not be loaded. Please check that Flask is running.");
+      }
+    };
+
+    loadActivities();
   }, [currentStudent]);
 
   // REGISTER STUDENT
@@ -462,34 +514,69 @@ function App() {
   const currentStreak =
     daysSinceLastCompletion <= 1 ? runningStreak : 0;
 
-  // SAVE STUDY ACTIVITY (CURRENTLY FRONTEND-ONLY)
-  const handleActivitySubmit = (e) => {
+  // SAVE STUDY ACTIVITY TO SQLITE
+  const handleActivitySubmit = async (e) => {
     e.preventDefault();
 
-    if (!activityForm.title || !activityForm.duration) {
+    if (!currentStudent) {
+      alert("Please connect to your student account first.");
+      navigate("login");
+      return;
+    }
+
+    const title = activityForm.title.trim();
+    const durationMinutes = parseDurationToMinutes(activityForm.duration);
+
+    if (!title || !activityForm.duration.trim()) {
       alert("Please enter the activity and duration.");
       return;
     }
 
-    const newActivity = {
-      id: Date.now(),
-      title: activityForm.title,
-      duration: activityForm.duration,
-      date: activityForm.date || "Today"
-    };
+    if (!durationMinutes) {
+      alert('Please enter a valid duration, for example "1 hr 30 min" or "90 min".');
+      return;
+    }
 
-    setActivities((previousActivities) => [
-      newActivity,
-      ...previousActivities
-    ]);
+    try {
+      const response = await fetch(`${API_URL}/api/activities`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          student_id: currentStudent.student_id,
+          title,
+          duration_minutes: durationMinutes,
+          date: activityForm.date
+        })
+      });
 
-    setActivityForm({
-      title: "",
-      duration: "",
-      date: ""
-    });
+      const result = await response.json();
 
-    alert("Study activity saved successfully!");
+      if (!response.ok) {
+        throw new Error(result.error || "Could not save your study activity.");
+      }
+
+      setActivities((previousActivities) => [
+        result.activity,
+        ...previousActivities
+      ]);
+
+      setActivityForm({
+        title: "",
+        duration: "",
+        date: ""
+      });
+
+      alert("Study activity saved successfully!");
+
+    } catch (error) {
+      console.error("Save study activity error:", error);
+
+      alert(
+        error.message === "Failed to fetch"
+          ? "Could not connect to the backend. Make sure Flask is running."
+          : error.message
+      );
+    }
   };
 
   return (
@@ -582,6 +669,7 @@ function App() {
             setCurrentStudent(null);
             setGoals([]);
             setMicroGoals([]);
+            setActivities([]);
             navigate("login");
           }}
         />

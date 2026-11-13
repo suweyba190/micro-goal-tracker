@@ -146,6 +146,33 @@ def format_micro_goal(micro_goal):
     }
 
 
+# HELPER: FORMAT STUDY DURATION
+def format_duration(minutes):
+    hours = minutes // 60
+    remaining_minutes = minutes % 60
+
+    if hours and remaining_minutes:
+        hour_text = "hr" if hours == 1 else "hrs"
+        return f"{hours} {hour_text} {remaining_minutes} min"
+
+    if hours:
+        hour_text = "hr" if hours == 1 else "hrs"
+        return f"{hours} {hour_text}"
+
+    return f"{minutes} min"
+
+
+# HELPER: FORMAT STUDY ACTIVITY
+def format_activity(activity):
+    return {
+        "id": activity["activity_id"],
+        "title": activity["activity_description"],
+        "duration": format_duration(activity["duration_minutes"]),
+        "durationMinutes": activity["duration_minutes"],
+        "date": activity["activity_date"]
+    }
+
+
 # CREATE ACADEMIC GOAL
 @app.route("/api/goals", methods=["POST"])
 def create_goal():
@@ -527,6 +554,150 @@ def delete_micro_goal(micro_goal_id):
         connection.commit()
 
         return jsonify({"message": "Micro-goal deleted successfully!"}), 200
+
+    finally:
+        connection.close()
+
+
+# CREATE A STUDY ACTIVITY
+@app.route("/api/activities", methods=["POST"])
+def create_activity():
+    data = request.get_json(silent=True) or {}
+
+    student_id = get_student_id(data.get("student_id"))
+    title = str(data.get("title", "")).strip()
+    duration_minutes = data.get("duration_minutes")
+    activity_date = str(data.get("date") or date.today().isoformat()).strip()
+
+    if not student_id:
+        return jsonify({"error": "A valid student ID is required."}), 400
+
+    if not title:
+        return jsonify({"error": "Activity title is required."}), 400
+
+    if isinstance(duration_minutes, bool):
+        return jsonify({"error": "Duration must be a positive number of minutes."}), 400
+
+    try:
+        duration_minutes = int(duration_minutes)
+    except (TypeError, ValueError):
+        return jsonify({"error": "Duration must be a positive number of minutes."}), 400
+
+    if duration_minutes <= 0:
+        return jsonify({"error": "Duration must be greater than zero."}), 400
+
+    try:
+        activity_date = date.fromisoformat(activity_date).isoformat()
+    except ValueError:
+        return jsonify({"error": "Please provide a valid activity date."}), 400
+
+    connection = get_connection()
+
+    try:
+        student = connection.execute(
+            "SELECT student_id FROM Student WHERE student_id = ?",
+            (student_id,)
+        ).fetchone()
+
+        if student is None:
+            return jsonify({"error": "Student account was not found."}), 404
+
+        cursor = connection.execute(
+            """
+            INSERT INTO StudyActivity
+            (student_id, activity_description, duration_minutes, activity_date)
+            VALUES (?, ?, ?, ?)
+            """,
+            (student_id, title, duration_minutes, activity_date)
+        )
+
+        connection.commit()
+
+        saved_activity = connection.execute(
+            """
+            SELECT *
+            FROM StudyActivity
+            WHERE activity_id = ?
+            """,
+            (cursor.lastrowid,)
+        ).fetchone()
+
+        return jsonify({
+            "message": "Study activity saved successfully!",
+            "activity": format_activity(saved_activity)
+        }), 201
+
+    finally:
+        connection.close()
+
+
+# GET STUDY ACTIVITIES FOR ONE STUDENT
+@app.route("/api/activities", methods=["GET"])
+def get_activities():
+    student_id = get_student_id(request.args.get("student_id"))
+
+    if not student_id:
+        return jsonify({"error": "A valid student ID is required."}), 400
+
+    connection = get_connection()
+
+    try:
+        student = connection.execute(
+            "SELECT student_id FROM Student WHERE student_id = ?",
+            (student_id,)
+        ).fetchone()
+
+        if student is None:
+            return jsonify({"error": "Student account was not found."}), 404
+
+        activities = connection.execute(
+            """
+            SELECT *
+            FROM StudyActivity
+            WHERE student_id = ?
+            ORDER BY activity_date DESC, activity_id DESC
+            """,
+            (student_id,)
+        ).fetchall()
+
+        return jsonify({
+            "activities": [
+                format_activity(activity)
+                for activity in activities
+            ]
+        }), 200
+
+    finally:
+        connection.close()
+
+
+# DELETE A STUDY ACTIVITY
+@app.route("/api/activities/<int:activity_id>", methods=["DELETE"])
+def delete_activity(activity_id):
+    student_id = get_student_id(request.args.get("student_id"))
+
+    if not student_id:
+        return jsonify({"error": "A valid student ID is required."}), 400
+
+    connection = get_connection()
+
+    try:
+        cursor = connection.execute(
+            """
+            DELETE FROM StudyActivity
+            WHERE activity_id = ? AND student_id = ?
+            """,
+            (activity_id, student_id)
+        )
+
+        if cursor.rowcount == 0:
+            return jsonify({"error": "Activity not found for this student."}), 404
+
+        connection.commit()
+
+        return jsonify({
+            "message": "Study activity deleted successfully!"
+        }), 200
 
     finally:
         connection.close()
