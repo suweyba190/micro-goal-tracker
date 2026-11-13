@@ -72,7 +72,7 @@ function App() {
 
   // LOAD THE CONNECTED STUDENT'S ACADEMIC GOALS
   useEffect(() => {
-    if (!currentStudent) return;
+if (!currentStudent) return;
 
     const loadStudentGoals = async () => {
       try {
@@ -125,13 +125,10 @@ function App() {
 
     loadMicroGoals();
   }, [currentStudent]);
-
-  // LOAD THE CONNECTED STUDENT'S SAVED STUDY ACTIVITIES
-  useEffect(() => {
-    if (!currentStudent) {
-      setActivities([]);
-      return;
-    }
+// LOAD THE CONNECTED STUDENT'S SAVED STUDY ACTIVITIES
+useEffect(() => {
+  if (!currentStudent) return;
+  
 
     const loadActivities = async () => {
       try {
@@ -657,6 +654,9 @@ function App() {
         <ReportsPage
           navigate={navigate}
           goals={goals}
+          microGoals={microGoals}
+          activities={activities}
+    
           setShowProfile={setShowProfile}
         />
       )}

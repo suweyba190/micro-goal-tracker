@@ -1,21 +1,25 @@
+
 import DashboardLayout from "../components/DashboardLayout";
 
 function ReportsPage({
   navigate,
-  goals,
+  goals = [],
+  microGoals = [],
+  activities = [],
   setShowProfile,
 }) {
+  // ACADEMIC GOALS
   const totalGoals = goals.length;
 
   const completedGoals = goals.filter(
-    (goal) => goal.progress === 100
+    (goal) => Number(goal.progress) === 100
   ).length;
 
   const averageProgress =
     totalGoals > 0
       ? Math.round(
           goals.reduce(
-            (sum, goal) => sum + goal.progress,
+            (sum, goal) => sum + (Number(goal.progress) || 0),
             0
           ) / totalGoals
         )
@@ -23,9 +27,57 @@ function ReportsPage({
 
   const inProgressGoals = goals.filter(
     (goal) =>
-      goal.progress > 0 &&
-      goal.progress < 100
+      Number(goal.progress) > 0 &&
+      Number(goal.progress) < 100
   ).length;
+
+  // MICRO-GOALS
+  const totalMicroGoals = microGoals.length;
+
+  const completedMicroGoals = microGoals.filter(
+    (goal) =>
+      goal.completed === true ||
+      goal.completed === 1
+  ).length;
+
+  const remainingMicroGoals =
+    totalMicroGoals - completedMicroGoals;
+
+  const microGoalProgress =
+    totalMicroGoals > 0
+      ? Math.round(
+          (completedMicroGoals / totalMicroGoals) * 100
+        )
+      : 0;
+
+  // STUDY ACTIVITIES
+  const totalActivities = activities.length;
+
+  const totalStudyMinutes = activities.reduce(
+    (sum, activity) =>
+      sum +
+      (Number(
+        activity.durationMinutes ??
+        activity.duration_minutes ??
+        activity.minutes
+      ) || 0),
+    0
+  );
+
+  const studyHours = Math.floor(totalStudyMinutes / 60);
+  const remainingMinutes = totalStudyMinutes % 60;
+
+  const formatStudyTime = () => {
+    if (studyHours === 0) {
+      return `${remainingMinutes} min`;
+    }
+
+    if (remainingMinutes === 0) {
+      return `${studyHours} hr`;
+    }
+
+    return `${studyHours} hr ${remainingMinutes} min`;
+  };
 
   return (
     <DashboardLayout
@@ -33,12 +85,9 @@ function ReportsPage({
       setShowProfile={setShowProfile}
       activePage="reports"
     >
-
       <div className="reports-premium-page">
 
-        {/* =========================
-            HERO
-        ========================= */}
+        {/* HERO */}
 
         <section className="reports-hero">
 
@@ -62,29 +111,20 @@ function ReportsPage({
 
           </div>
 
-
           <div className="reports-hero-score">
 
-            <span>
-              OVERALL
-            </span>
+            <span>OVERALL</span>
 
-            <strong>
-              {averageProgress}%
-            </strong>
+            <strong>{averageProgress}%</strong>
 
-            <small>
-              average progress
-            </small>
+            <small>average progress</small>
 
           </div>
 
         </section>
 
 
-        {/* =========================
-            STATISTICS
-        ========================= */}
+        {/* ACADEMIC GOAL STATISTICS */}
 
         <section className="report-premium-stats">
 
@@ -95,16 +135,11 @@ function ReportsPage({
               <small>TOTAL</small>
             </div>
 
-            <strong>
-              {totalGoals}
-            </strong>
+            <strong>{totalGoals}</strong>
 
-            <p>
-              Academic Goals
-            </p>
+            <p>Academic Goals</p>
 
           </div>
-
 
           <div className="report-premium-stat">
 
@@ -113,16 +148,11 @@ function ReportsPage({
               <small>DONE</small>
             </div>
 
-            <strong>
-              {completedGoals}
-            </strong>
+            <strong>{completedGoals}</strong>
 
-            <p>
-              Completed Goals
-            </p>
+            <p>Completed Goals</p>
 
           </div>
-
 
           <div className="report-premium-stat report-stat-highlight">
 
@@ -131,16 +161,11 @@ function ReportsPage({
               <small>ACTIVE</small>
             </div>
 
-            <strong>
-              {inProgressGoals}
-            </strong>
+            <strong>{inProgressGoals}</strong>
 
-            <p>
-              Goals In Progress
-            </p>
+            <p>Goals In Progress</p>
 
           </div>
-
 
           <div className="report-premium-stat">
 
@@ -149,22 +174,75 @@ function ReportsPage({
               <small>AVERAGE</small>
             </div>
 
-            <strong>
-              {averageProgress}%
-            </strong>
+            <strong>{averageProgress}%</strong>
 
-            <p>
-              Overall Progress
-            </p>
+            <p>Overall Progress</p>
 
           </div>
 
         </section>
 
 
-        {/* =========================
-            GOAL PROGRESS
-        ========================= */}
+        {/* MICRO-GOAL STATISTICS */}
+
+        <section className="report-premium-stats">
+
+          <div className="report-premium-stat">
+
+            <div className="report-stat-top">
+              <span>📝</span>
+              <small>TOTAL</small>
+            </div>
+
+            <strong>{totalMicroGoals}</strong>
+
+            <p>Total Micro-Goals</p>
+
+          </div>
+
+          <div className="report-premium-stat">
+
+            <div className="report-stat-top">
+              <span>✓</span>
+              <small>COMPLETED</small>
+            </div>
+
+            <strong>{completedMicroGoals}</strong>
+
+            <p>Completed Micro-Goals</p>
+
+          </div>
+
+          <div className="report-premium-stat report-stat-highlight">
+
+            <div className="report-stat-top">
+              <span>◷</span>
+              <small>REMAINING</small>
+            </div>
+
+            <strong>{remainingMicroGoals}</strong>
+
+            <p>Remaining Micro-Goals</p>
+
+          </div>
+
+          <div className="report-premium-stat">
+
+            <div className="report-stat-top">
+              <span>↗</span>
+              <small>PROGRESS</small>
+            </div>
+
+            <strong>{microGoalProgress}%</strong>
+
+            <p>Micro-Goal Completion</p>
+
+          </div>
+
+        </section>
+
+
+        {/* STUDY ACTIVITY SUMMARY */}
 
         <section className="reports-progress-card">
 
@@ -172,13 +250,147 @@ function ReportsPage({
 
             <div>
 
-              <span>
-                PERFORMANCE
-              </span>
+              <span>STUDY ACTIVITY</span>
 
-              <h2>
-                Goal Progress
-              </h2>
+              <h2>Your Study Summary</h2>
+
+              <p>
+                An overview of the study sessions you have recorded.
+              </p>
+
+            </div>
+
+          </div>
+
+          <div className="report-premium-stats">
+
+            <div className="report-premium-stat">
+
+              <div className="report-stat-top">
+                <span>◷</span>
+                <small>TOTAL TIME</small>
+              </div>
+
+              <strong>{formatStudyTime()}</strong>
+
+              <p>Total Study Time</p>
+
+            </div>
+
+            <div className="report-premium-stat">
+
+              <div className="report-stat-top">
+                <span>📚</span>
+                <small>SESSIONS</small>
+              </div>
+
+              <strong>{totalActivities}</strong>
+
+              <p>Recorded Sessions</p>
+
+            </div>
+
+          </div>
+
+          {activities.length > 0 ? (
+
+            <div className="reports-goal-list">
+
+              {activities.map((activity, index) => (
+
+                <div
+                  className="reports-goal-item"
+                  key={activity.id ?? activity.activity_id ?? index}
+                >
+
+                  <div className="reports-goal-number">
+                    0{index + 1}
+                  </div>
+
+                  <div className="reports-goal-info">
+
+                    <div className="reports-goal-title">
+
+                      <div>
+
+                        <h3>
+                          {activity.title ||
+                            activity.description ||
+                            activity.activity_description ||
+                            "Study Session"}
+                        </h3>
+
+                        <span>
+                          {activity.date ||
+                            activity.activity_date ||
+                            "Recorded activity"}
+                        </span>
+
+                      </div>
+
+                      <strong>
+                        {activity.duration ||
+                          activity.duration_text ||
+                          (
+                            Number(
+                              activity.durationMinutes ??
+                              activity.duration_minutes ??
+                              activity.minutes
+                            ) > 0
+                              ? `${Number(
+                                  activity.durationMinutes ??
+                                  activity.duration_minutes ??
+                                  activity.minutes
+                                )} min`
+                              : "Recorded"
+                          )}
+                      </strong>
+
+                    </div>
+
+                  </div>
+
+                </div>
+
+              ))}
+
+            </div>
+
+          ) : (
+
+            <div className="reports-empty">
+
+              <div>📚</div>
+
+              <h3>No study activities yet</h3>
+
+              <p>
+                Record your first study session to see your
+                study time and activity here.
+              </p>
+
+              <button onClick={() => navigate("activity")}>
+                Record Study Activity →
+              </button>
+
+            </div>
+
+          )}
+
+        </section>
+
+
+        {/* ACADEMIC GOAL PROGRESS */}
+
+        <section className="reports-progress-card">
+
+          <div className="reports-progress-heading">
+
+            <div>
+
+              <span>PERFORMANCE</span>
+
+              <h2>Goal Progress</h2>
 
               <p>
                 Your current progress across all academic goals.
@@ -191,7 +403,6 @@ function ReportsPage({
             </div>
 
           </div>
-
 
           <div className="reports-goal-list">
 
@@ -208,29 +419,21 @@ function ReportsPage({
                     0{index + 1}
                   </div>
 
-
                   <div className="reports-goal-info">
 
                     <div className="reports-goal-title">
 
                       <div>
 
-                        <h3>
-                          {goal.title}
-                        </h3>
+                        <h3>{goal.title}</h3>
 
-                        <span>
-                          {goal.subject}
-                        </span>
+                        <span>{goal.subject}</span>
 
                       </div>
 
-                      <strong>
-                        {goal.progress}%
-                      </strong>
+                      <strong>{goal.progress}%</strong>
 
                     </div>
-
 
                     <div className="reports-progress-track">
 
@@ -243,12 +446,9 @@ function ReportsPage({
 
                     </div>
 
-
                     <div className="reports-goal-footer">
 
-                      <span>
-                        Target: {goal.date}
-                      </span>
+                      <span>Target: {goal.date}</span>
 
                       <span
                         className={
@@ -274,13 +474,9 @@ function ReportsPage({
 
               <div className="reports-empty">
 
-                <div>
-                  📊
-                </div>
+                <div>📊</div>
 
-                <h3>
-                  No goals to report yet
-                </h3>
+                <h3>No goals to report yet</h3>
 
                 <p>
                   Create your first academic goal to start
@@ -288,9 +484,7 @@ function ReportsPage({
                 </p>
 
                 <button
-                  onClick={() =>
-                    navigate("createGoal")
-                  }
+                  onClick={() => navigate("createGoal")}
                 >
                   Create Goal →
                 </button>
@@ -304,9 +498,7 @@ function ReportsPage({
         </section>
 
 
-        {/* =========================
-            INSIGHT
-        ========================= */}
+        {/* INSIGHT */}
 
         <section className="reports-insight-card">
 
@@ -316,13 +508,9 @@ function ReportsPage({
 
           <div>
 
-            <span>
-              STUDY INSIGHT
-            </span>
+            <span>STUDY INSIGHT</span>
 
-            <h2>
-              Small progress adds up.
-            </h2>
+            <h2>Small progress adds up.</h2>
 
             <p>
               Keep completing your micro-goals and recording
@@ -336,9 +524,7 @@ function ReportsPage({
         </section>
 
 
-        {/* =========================
-            ACTIONS
-        ========================= */}
+        {/* ACTIONS */}
 
         <div className="reports-actions">
 
