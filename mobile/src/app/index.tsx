@@ -1,5 +1,6 @@
 
 import { StatusBar } from 'expo-status-bar';
+import { Link } from 'expo-router';
 import {
   SafeAreaView,
   ScrollView,
@@ -25,25 +26,22 @@ export default function WelcomeScreen() {
         </View>
 
         <View style={styles.hero}>
-          <Text style={styles.eyebrow}>BUILD BETTER STUDY HABITS</Text>
-
+          <Text style={styles.eyebrow}>STUDY WITH PURPOSE</Text>
           <Text style={styles.heading}>
-            Make progress, one goal at a time.
+            Make every study session count.
           </Text>
-
           <Text style={styles.description}>
-            Organise your studies into smaller daily goals, stay consistent,
-            and keep track of your progress.
+            Turn your academic goals into manageable daily tasks and build
+            better study habits, one step at a time.
           </Text>
         </View>
 
         <View style={styles.progressCard}>
-          <View style={styles.cardHeader}>
-            <View>
-              <Text style={styles.cardLabel}>YOUR DAILY PROGRESS</Text>
-              <Text style={styles.cardTitle}>Keep moving forward</Text>
+          <View style={styles.progressTop}>
+            <View style={styles.progressText}>
+              <Text style={styles.cardLabel}>YOUR PROGRESS</Text>
+              <Text style={styles.cardTitle}>Small steps add up.</Text>
             </View>
-
             <View style={styles.progressCircle}>
               <Text style={styles.progressNumber}>45%</Text>
             </View>
@@ -52,50 +50,61 @@ export default function WelcomeScreen() {
           <View style={styles.progressTrack}>
             <View style={styles.progressFill} />
           </View>
-
           <Text style={styles.progressCaption}>
-            Every completed task brings you closer to your goals.
+            Stay consistent and keep moving towards your goals.
           </Text>
         </View>
 
         <View style={styles.features}>
-          <Text style={styles.sectionTitle}>A simpler way to stay on track</Text>
+          <Text style={styles.sectionTitle}>Everything starts with a plan</Text>
 
           <View style={styles.featureRow}>
-            <View style={styles.featureIcon}>
-              <Text style={styles.featureLetter}>01</Text>
+            <View style={styles.featureNumber}>
+              <Text style={styles.numberText}>01</Text>
             </View>
-            <View style={styles.featureText}>
+            <View style={styles.featureContent}>
               <Text style={styles.featureTitle}>Set academic goals</Text>
               <Text style={styles.featureDescription}>
-                Organise what you want to achieve in each subject.
+                Plan what you want to achieve in each subject.
               </Text>
             </View>
           </View>
 
           <View style={styles.featureRow}>
-            <View style={styles.featureIcon}>
-              <Text style={styles.featureLetter}>02</Text>
+            <View style={styles.featureNumber}>
+              <Text style={styles.numberText}>02</Text>
             </View>
-            <View style={styles.featureText}>
-              <Text style={styles.featureTitle}>Break work into small tasks</Text>
+            <View style={styles.featureContent}>
+              <Text style={styles.featureTitle}>Create daily micro-goals</Text>
               <Text style={styles.featureDescription}>
-                Turn bigger goals into manageable daily actions.
+                Break bigger tasks into smaller actions.
               </Text>
             </View>
           </View>
 
           <View style={styles.featureRow}>
-            <View style={styles.featureIcon}>
-              <Text style={styles.featureLetter}>03</Text>
+            <View style={styles.featureNumber}>
+              <Text style={styles.numberText}>03</Text>
             </View>
-            <View style={styles.featureText}>
-              <Text style={styles.featureTitle}>Track your progress</Text>
+            <View style={styles.featureContent}>
+              <Text style={styles.featureTitle}>Monitor your progress</Text>
               <Text style={styles.featureDescription}>
-                See your completed work and build consistency.
+                Review your work and build consistent habits.
               </Text>
             </View>
           </View>
+        </View>
+
+        <View style={styles.actions}>
+          <Link href="/register" style={styles.primaryButton}>
+            <Text style={styles.primaryButtonText}>Create an account</Text>
+          </Link>
+
+          <Link href="/login" style={styles.secondaryButton}>
+            <Text style={styles.secondaryButtonText}>
+              Already have an account? Connect
+            </Text>
+          </Link>
         </View>
 
         <Text style={styles.footer}>
@@ -112,23 +121,24 @@ const styles = StyleSheet.create({
     backgroundColor: '#F8F7FC',
   },
   container: {
+    flexGrow: 1,
     paddingHorizontal: 25,
-    paddingTop: 22,
-    paddingBottom: 35,
+    paddingTop: 18,
+    paddingBottom: 28,
   },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 48,
+    marginBottom: 32,
   },
   logo: {
-    width: 39,
-    height: 39,
-    borderRadius: 12,
+    width: 38,
+    height: 38,
+    borderRadius: 11,
     backgroundColor: '#6852B8',
     justifyContent: 'center',
     alignItems: 'center',
-    marginRight: 11,
+    marginRight: 10,
   },
   logoText: {
     color: '#FFFFFF',
@@ -139,75 +149,80 @@ const styles = StyleSheet.create({
     fontSize: 19,
     fontWeight: '700',
     color: '#29243A',
+    letterSpacing: -0.3,
   },
   hero: {
-    marginBottom: 30,
+    marginBottom: 23,
   },
   eyebrow: {
     color: '#7663B5',
-    fontSize: 11,
+    fontSize: 10,
     fontWeight: '700',
     letterSpacing: 1.5,
-    marginBottom: 15,
+    marginBottom: 10,
   },
   heading: {
     color: '#29243A',
-    fontSize: 37,
-    lineHeight: 45,
+    fontSize: 34,
+    lineHeight: 41,
     fontWeight: '700',
-    letterSpacing: -1,
-    marginBottom: 16,
+    letterSpacing: -0.8,
+    marginBottom: 11,
   },
   description: {
     color: '#777386',
-    fontSize: 15,
-    lineHeight: 24,
+    fontSize: 14,
+    lineHeight: 21,
   },
   progressCard: {
     backgroundColor: '#FFFFFF',
-    padding: 21,
-    borderRadius: 20,
-    marginBottom: 38,
+    padding: 18,
+    borderRadius: 17,
+    marginBottom: 27,
     borderWidth: 1,
     borderColor: '#EFEDF5',
   },
-  cardHeader: {
+  progressTop: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 23,
+    justifyContent: 'space-between',
+    marginBottom: 16,
+  },
+  progressText: {
+    flex: 1,
+    paddingRight: 10,
   },
   cardLabel: {
     fontSize: 10,
     letterSpacing: 1.1,
     color: '#918BA2',
     fontWeight: '700',
-    marginBottom: 7,
+    marginBottom: 6,
   },
   cardTitle: {
-    fontSize: 17,
+    fontSize: 16,
     fontWeight: '700',
     color: '#302B40',
   },
   progressCircle: {
-    width: 54,
-    height: 54,
-    borderRadius: 27,
+    width: 48,
+    height: 48,
+    borderRadius: 24,
     backgroundColor: '#F0ECFA',
     justifyContent: 'center',
     alignItems: 'center',
   },
   progressNumber: {
     color: '#6852B8',
-    fontSize: 15,
+    fontSize: 14,
     fontWeight: '700',
   },
   progressTrack: {
-    height: 8,
+    height: 7,
     backgroundColor: '#EEEAF5',
     borderRadius: 10,
     overflow: 'hidden',
-    marginBottom: 13,
+    marginBottom: 10,
   },
   progressFill: {
     width: '45%',
@@ -217,56 +232,83 @@ const styles = StyleSheet.create({
   },
   progressCaption: {
     color: '#898496',
-    fontSize: 12,
-    lineHeight: 19,
+    fontSize: 11,
+    lineHeight: 17,
   },
   features: {
-    marginBottom: 30,
+    marginBottom: 23,
   },
   sectionTitle: {
     color: '#302B40',
-    fontSize: 19,
+    fontSize: 17,
     fontWeight: '700',
-    marginBottom: 22,
+    marginBottom: 16,
   },
   featureRow: {
     flexDirection: 'row',
-    alignItems: 'flex-start',
-    marginBottom: 21,
+    alignItems: 'center',
+    marginBottom: 14,
   },
-  featureIcon: {
-    width: 43,
-    height: 43,
-    borderRadius: 13,
+  featureNumber: {
+    width: 35,
+    height: 35,
+    borderRadius: 10,
     backgroundColor: '#EFEBF8',
     justifyContent: 'center',
     alignItems: 'center',
-    marginRight: 14,
+    marginRight: 12,
   },
-  featureLetter: {
+  numberText: {
     color: '#6852B8',
-    fontSize: 13,
+    fontSize: 11,
     fontWeight: '700',
   },
-  featureText: {
+  featureContent: {
     flex: 1,
-    paddingTop: 2,
   },
   featureTitle: {
     color: '#302B40',
-    fontSize: 15,
+    fontSize: 13,
     fontWeight: '700',
-    marginBottom: 5,
+    marginBottom: 3,
   },
   featureDescription: {
     color: '#898496',
+    fontSize: 12,
+    lineHeight: 17,
+  },
+  actions: {
+    gap: 10,
+    marginTop: 1,
+  },
+  primaryButton: {
+    backgroundColor: '#6852B8',
+    borderRadius: 12,
+    paddingVertical: 15,
+    alignItems: 'center',
+  },
+  primaryButtonText: {
+    color: '#FFFFFF',
+    fontSize: 14,
+    fontWeight: '700',
+  },
+  secondaryButton: {
+    backgroundColor: '#FFFFFF',
+    borderWidth: 1,
+    borderColor: '#DED8EC',
+    borderRadius: 12,
+    paddingVertical: 14,
+    alignItems: 'center',
+  },
+  secondaryButtonText: {
+    color: '#6852B8',
     fontSize: 13,
-    lineHeight: 20,
+    fontWeight: '600',
   },
   footer: {
     textAlign: 'center',
     color: '#9993A5',
-    fontSize: 12,
-    marginTop: 5,
+    fontSize: 11,
+    marginTop: 19,
   },
 });
