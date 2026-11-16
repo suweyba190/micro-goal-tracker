@@ -131,7 +131,7 @@ function ReportsPage({
           <div className="report-premium-stat">
 
             <div className="report-stat-top">
-              <span>🎯</span>
+              <span></span>
               <small>TOTAL</small>
             </div>
 
@@ -144,7 +144,7 @@ function ReportsPage({
           <div className="report-premium-stat">
 
             <div className="report-stat-top">
-              <span>✓</span>
+              <span></span>
               <small>DONE</small>
             </div>
 
@@ -474,7 +474,7 @@ function ReportsPage({
 
               <div className="reports-empty">
 
-                <div>📊</div>
+                <div></div>
 
                 <h3>No goals to report yet</h3>
 
