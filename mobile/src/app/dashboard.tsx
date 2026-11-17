@@ -16,20 +16,14 @@ import * as SecureStore from 'expo-secure-store';
 
 const API_URL = 'http://10.50.61.74:5000';
 
-type Student = {
-  student_id: number;
-  full_name: string;
-  email: string;
-};
-
 type Goal = {
   id: number;
   title: string;
   subject: string;
   date: string;
   priority: string;
-  progress: number;
-  status: string;
+  progress?: number;
+  status?: string;
 };
 
 type MicroGoal = {
@@ -37,7 +31,13 @@ type MicroGoal = {
   goalId: number;
   goalTitle: string;
   title: string;
-  completed: boolean | number;
+  completed: boolean;
+};
+
+type Student = {
+  student_id: number;
+  full_name: string;
+  email: string;
 };
 
 export default function DashboardScreen() {
@@ -62,29 +62,27 @@ export default function DashboardScreen() {
       setStudent(currentStudent);
 
       const [goalsResponse, microGoalsResponse] = await Promise.all([
-        fetch(
-          `${API_URL}/api/goals?student_id=${currentStudent.student_id}`,
-        ),
-        fetch(
-          `${API_URL}/api/micro-goals?student_id=${currentStudent.student_id}`,
-        ),
+        fetch(`${API_URL}/api/goals?student_id=${currentStudent.student_id}`),
+        fetch(`${API_URL}/api/micro-goals?student_id=${currentStudent.student_id}`),
       ]);
-
-      if (!goalsResponse.ok || !microGoalsResponse.ok) {
-        throw new Error('Could not load your study information.');
-      }
 
       const goalsData = await goalsResponse.json();
       const microGoalsData = await microGoalsResponse.json();
+
+      if (!goalsResponse.ok) {
+        throw new Error(goalsData.message || 'Could not load academic goals.');
+      }
+
+      if (!microGoalsResponse.ok) {
+        throw new Error(microGoalsData.message || 'Could not load micro-goals.');
+      }
 
       setGoals(goalsData.goals || []);
       setMicroGoals(microGoalsData.micro_goals || []);
     } catch (error) {
       Alert.alert(
         'Dashboard error',
-        error instanceof Error
-          ? error.message
-          : 'Something went wrong while loading your dashboard.',
+        error instanceof Error ? error.message : 'Please try again.'
       );
     } finally {
       setLoading(false);
@@ -96,111 +94,90 @@ export default function DashboardScreen() {
     loadDashboard();
   }, [loadDashboard]);
 
-  const onRefresh = () => {
-    setRefreshing(true);
-    loadDashboard();
-  };
+  async function disconnect() {
+    Alert.alert('Disconnect', 'Are you sure you want to log out?', [
+      { text: 'Cancel', style: 'cancel' },
+      {
+        text: 'Log out',
+        style: 'destructive',
+        onPress: async () => {
+          await SecureStore.deleteItemAsync('studentSession');
+          router.replace('/login');
+        },
+      },
+    ]);
+  }
 
-  const handleDisconnect = async () => {
-    await SecureStore.deleteItemAsync('studentSession');
-    router.replace('/');
-  };
-
-  const completedMicroGoals = microGoals.filter(
-    (item) => item.completed === true || item.completed === 1,
+  const completedTasks = microGoals.filter(
+    (item) => item.completed
   ).length;
 
-  const progressPercentage =
-    microGoals.length > 0
-      ? Math.round((completedMicroGoals / microGoals.length) * 100)
-      : 0;
+  const totalTasks = microGoals.length;
 
   if (loading) {
     return (
       <SafeAreaView style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#6852B8" />
+        <ActivityIndicator size="large" color="#7055C8" />
         <Text style={styles.loadingText}>Loading your dashboard...</Text>
       </SafeAreaView>
     );
   }
 
   return (
-    <SafeAreaView style={styles.safeArea}>
+    <SafeAreaView style={styles.container}>
       <ScrollView
-        contentContainerStyle={styles.container}
-        showsVerticalScrollIndicator={false}
+        contentContainerStyle={styles.content}
         refreshControl={
           <RefreshControl
             refreshing={refreshing}
-            onRefresh={onRefresh}
-            tintColor="#6852B8"
+            onRefresh={() => {
+              setRefreshing(true);
+              loadDashboard();
+            }}
+            tintColor="#7055C8"
           />
         }
       >
         <View style={styles.header}>
           <View>
-            <Text style={styles.brand}>MICROGOAL</Text>
-            <Text style={styles.headerSubtitle}>STUDENT DASHBOARD</Text>
+            <Text style={styles.brand}>MicroGoal</Text>
+            <Text style={styles.greeting}>
+              Hello, {student?.full_name || 'Student'}
+            </Text>
+            <Text style={styles.subtitle}>
+              Keep making progress, one task at a time.
+            </Text>
           </View>
 
-          <TouchableOpacity onPress={handleDisconnect}>
-            <Text style={styles.disconnect}>Disconnect</Text>
+          <TouchableOpacity onPress={disconnect} style={styles.logoutButton}>
+            <Text style={styles.logoutText}>Log out</Text>
           </TouchableOpacity>
         </View>
 
-        <View style={styles.welcomeSection}>
-          <Text style={styles.greeting}>Welcome back,</Text>
-          <Text style={styles.studentName}>
-            {student?.full_name || 'Student'}
-          </Text>
-          <Text style={styles.welcomeDescription}>
-            Keep making progress, one small goal at a time.
-          </Text>
-        </View>
-
-        <Text style={styles.sectionTitle}>Your overview</Text>
-
-        <View style={styles.statsContainer}>
-          <View style={styles.statCard}>
-            <Text style={styles.statNumber}>{goals.length}</Text>
-            <Text style={styles.statLabel}>Academic goals</Text>
-          </View>
-
-          <View style={styles.statCard}>
-            <Text style={styles.statNumber}>
-              {completedMicroGoals}/{microGoals.length}
-            </Text>
-            <Text style={styles.statLabel}>Tasks completed</Text>
-          </View>
-        </View>
-
-        <View style={styles.progressCard}>
-          <View style={styles.progressHeading}>
+        <View style={styles.summaryCard}>
+          <Text style={styles.summaryLabel}>YOUR STUDY PROGRESS</Text>
+          <View style={styles.summaryRow}>
             <View>
-              <Text style={styles.progressTitle}>Micro-goal progress</Text>
-              <Text style={styles.progressSubtitle}>
-                Your overall task completion
-              </Text>
+              <Text style={styles.summaryNumber}>{goals.length}</Text>
+              <Text style={styles.summaryDescription}>Academic goals</Text>
             </View>
-
-            <Text style={styles.progressPercentage}>
-              {progressPercentage}%
-            </Text>
-          </View>
-
-          <View style={styles.progressBackground}>
-            <View
-              style={[
-                styles.progressFill,
-                { width: `${progressPercentage}%` },
-              ]}
-            />
+            <View style={styles.summaryDivider} />
+            <View>
+              <Text style={styles.summaryNumber}>
+                {completedTasks}/{totalTasks}
+              </Text>
+              <Text style={styles.summaryDescription}>Tasks completed</Text>
+            </View>
           </View>
         </View>
 
-        <View style={styles.sectionHeading}>
-          <Text style={styles.sectionTitle}>Academic goals</Text>
-          <Text style={styles.itemCount}>{goals.length} total</Text>
+        <View style={styles.sectionHeader}>
+          <View>
+            <Text style={styles.sectionTitle}>Academic goals</Text>
+            <Text style={styles.sectionSubtitle}>
+              Select a goal to manage its smaller tasks.
+            </Text>
+          </View>
         </View>
 
         <TouchableOpacity
@@ -214,104 +191,79 @@ export default function DashboardScreen() {
         {goals.length === 0 ? (
           <View style={styles.emptyCard}>
             <Text style={styles.emptyTitle}>No academic goals yet</Text>
-            <Text style={styles.emptyDescription}>
-              Create your first academic goal to start planning your studies.
+            <Text style={styles.emptyText}>
+              Create your first academic goal to start planning your study tasks.
             </Text>
           </View>
         ) : (
-          goals.map((goal) => (
-            <View key={goal.id} style={styles.goalCard}>
-              <View style={styles.goalTopRow}>
-                <Text style={styles.goalSubject}>{goal.subject}</Text>
-                <Text style={styles.goalPriority}>{goal.priority}</Text>
-              </View>
+          goals.map((goal) => {
+            const goalMicroGoals = microGoals.filter(
+              (item) => Number(item.goalId) === Number(goal.id)
+            );
 
-              <Text style={styles.goalTitle}>{goal.title}</Text>
-
-              <Text style={styles.goalDate}>
-                Target date: {goal.date}
-              </Text>
-
-              <View style={styles.goalProgressRow}>
-                <Text style={styles.goalProgressLabel}>Progress</Text>
-                <Text style={styles.goalProgressValue}>
-                  {goal.progress || 0}%
-                </Text>
-              </View>
-
-              <View style={styles.progressBackground}>
-                <View
-                  style={[
-                    styles.progressFill,
-                    {
-                      width: `${Math.min(
-                        100,
-                        Math.max(0, Number(goal.progress) || 0),
-                      )}%`,
-                    },
-                  ]}
-                />
-              </View>
-            </View>
-          ))
-        )}
-
-        <View style={styles.sectionHeading}>
-          <Text style={styles.sectionTitle}>Recent micro-goals</Text>
-          <Text style={styles.itemCount}>{microGoals.length} total</Text>
-        </View>
-
-        {microGoals.length === 0 ? (
-          <View style={styles.emptyCard}>
-            <Text style={styles.emptyTitle}>No micro-goals yet</Text>
-            <Text style={styles.emptyDescription}>
-              Smaller study tasks linked to your academic goals will appear here.
-            </Text>
-          </View>
-        ) : (
-          microGoals.slice(0, 5).map((item) => {
-            const isCompleted =
-              item.completed === true || item.completed === 1;
+            const goalCompleted = goalMicroGoals.filter(
+              (item) => item.completed
+            ).length;
 
             return (
-              <View key={item.id} style={styles.taskRow}>
-                <View
-                  style={[
-                    styles.taskIndicator,
-                    isCompleted && styles.taskCompleted,
-                  ]}
-                />
-                <View style={styles.taskInformation}>
-                  <Text
-                    style={[
-                      styles.taskTitle,
-                      isCompleted && styles.completedTaskTitle,
-                    ]}
-                  >
-                    {item.title}
-                  </Text>
-                  <Text style={styles.taskParent}>
-                    {item.goalTitle || 'Academic goal'}
+              <TouchableOpacity
+                key={goal.id}
+                style={styles.goalCard}
+                activeOpacity={0.85}
+                onPress={() =>
+                  router.push({
+                    pathname: '/micro-goals',
+                    params: {
+                      goal_id: String(goal.id),
+                      goal_title: goal.title,
+                    },
+                  })
+                }
+              >
+                <View style={styles.goalTopRow}>
+                  <View style={styles.goalTitleContainer}>
+                    <Text style={styles.goalTitle}>{goal.title}</Text>
+                    <Text style={styles.goalSubject}>{goal.subject}</Text>
+                  </View>
+                  <Text style={styles.priority}>{goal.priority}</Text>
+                </View>
+
+                <View style={styles.goalBottomRow}>
+                  <Text style={styles.goalDate}>Target: {goal.date}</Text>
+                  <Text style={styles.taskProgress}>
+                    {goalCompleted}/{goalMicroGoals.length} tasks
                   </Text>
                 </View>
-                <Text style={styles.taskStatus}>
-                  {isCompleted ? 'Completed' : 'Pending'}
+
+                <View style={styles.goalProgressTrack}>
+                  <View
+                    style={[
+                      styles.goalProgressFill,
+                      {
+                        width: `${
+                          goalMicroGoals.length
+                            ? (goalCompleted / goalMicroGoals.length) * 100
+                            : 0
+                        }%`,
+                      },
+                    ]}
+                  />
+                </View>
+
+                <Text style={styles.openGoalText}>
+                  Open goal and manage tasks →
                 </Text>
-              </View>
+              </TouchableOpacity>
             );
           })
         )}
-
-        <Text style={styles.footer}>
-          Small steps. Consistent progress.
-        </Text>
       </ScrollView>
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  safeArea: {
+  container: {
     flex: 1,
     backgroundColor: '#F8F7FC',
   },
@@ -322,263 +274,191 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   loadingText: {
-    marginTop: 14,
-    color: '#777386',
+    color: '#777184',
+    marginTop: 12,
     fontSize: 14,
   },
-  container: {
-    paddingHorizontal: 22,
-    paddingTop: 18,
-    paddingBottom: 35,
+  content: {
+    padding: 22,
+    paddingBottom: 40,
   },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 35,
+    alignItems: 'flex-start',
+    marginBottom: 25,
   },
   brand: {
-    color: '#6852B8',
-    fontSize: 17,
-    fontWeight: '800',
-    letterSpacing: 1.5,
-  },
-  headerSubtitle: {
-    color: '#9993A5',
-    fontSize: 9,
-    fontWeight: '600',
-    letterSpacing: 1.2,
-    marginTop: 4,
-  },
-  disconnect: {
-    color: '#6852B8',
-    fontSize: 13,
-    fontWeight: '600',
-  },
-  welcomeSection: {
-    marginBottom: 30,
+    color: '#7055C8',
+    fontSize: 14,
+    fontWeight: '700',
+    marginBottom: 13,
   },
   greeting: {
-    color: '#777386',
-    fontSize: 16,
-  },
-  studentName: {
-    color: '#29243A',
-    fontSize: 29,
-    fontWeight: '700',
-    marginTop: 4,
-  },
-  welcomeDescription: {
-    color: '#777386',
-    fontSize: 14,
-    lineHeight: 21,
-    marginTop: 9,
-  },
-  sectionTitle: {
-    color: '#302B40',
-    fontSize: 18,
+    color: '#252238',
+    fontSize: 25,
     fontWeight: '700',
   },
-  statsContainer: {
-    flexDirection: 'row',
-    gap: 12,
-    marginTop: 15,
-    marginBottom: 15,
-  },
-  statCard: {
-    flex: 1,
-    backgroundColor: '#FFFFFF',
-    borderRadius: 15,
-    borderWidth: 1,
-    borderColor: '#EEEAF4',
-    padding: 19,
-  },
-  statNumber: {
-    color: '#6852B8',
-    fontSize: 27,
-    fontWeight: '700',
-  },
-  statLabel: {
-    color: '#777386',
-    fontSize: 12,
+  subtitle: {
+    color: '#817B8D',
+    fontSize: 13,
     marginTop: 6,
   },
-  progressCard: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: 15,
-    borderWidth: 1,
-    borderColor: '#EEEAF4',
-    padding: 18,
-    marginBottom: 30,
+  logoutButton: {
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    borderRadius: 9,
+    backgroundColor: '#EFECF5',
   },
-  progressHeading: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 16,
-  },
-  progressTitle: {
-    color: '#302B40',
-    fontSize: 14,
-    fontWeight: '700',
-  },
-  progressSubtitle: {
-    color: '#9993A5',
-    fontSize: 11,
-    marginTop: 5,
-  },
-  progressPercentage: {
-    color: '#6852B8',
-    fontSize: 21,
-    fontWeight: '700',
-  },
-  progressBackground: {
-    height: 7,
-    backgroundColor: '#EEEAF5',
-    borderRadius: 10,
-    overflow: 'hidden',
-  },
-  progressFill: {
-    height: '100%',
-    backgroundColor: '#806BC7',
-    borderRadius: 10,
-  },
-  sectionHeading: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 14,
-    marginTop: 5,
-  },
-  itemCount: {
-    color: '#9993A5',
+  logoutText: {
+    color: '#7055C8',
+    fontWeight: '600',
     fontSize: 12,
   },
-  createButton: {
-    height: 50,
-    backgroundColor: '#6852B8',
-    borderRadius: 12,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: 15,
+  summaryCard: {
+    backgroundColor: '#7055C8',
+    borderRadius: 17,
+    padding: 21,
+    marginBottom: 29,
   },
-  createButtonText: {
-    color: '#FFFFFF',
-    fontSize: 14,
+  summaryLabel: {
+    color: '#E9E2FF',
+    fontSize: 10,
     fontWeight: '700',
+    letterSpacing: 1.2,
   },
-  goalCard: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: 15,
-    borderWidth: 1,
-    borderColor: '#EEEAF4',
-    padding: 17,
-    marginBottom: 12,
-  },
-  goalTopRow: {
+  summaryRow: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 10,
+    marginTop: 19,
   },
-  goalSubject: {
-    color: '#6852B8',
-    fontSize: 11,
+  summaryNumber: {
+    color: '#FFFFFF',
+    fontSize: 29,
     fontWeight: '700',
   },
-  goalPriority: {
-    color: '#777386',
-    fontSize: 11,
+  summaryDescription: {
+    color: '#E9E2FF',
+    fontSize: 12,
+    marginTop: 3,
   },
-  goalTitle: {
-    color: '#302B40',
-    fontSize: 16,
-    fontWeight: '700',
+  summaryDivider: {
+    width: 1,
+    height: 45,
+    backgroundColor: '#A99AD8',
+    marginHorizontal: 35,
   },
-  goalDate: {
-    color: '#9993A5',
-    fontSize: 11,
-    marginTop: 7,
+  sectionHeader: {
     marginBottom: 16,
   },
-  goalProgressRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginBottom: 8,
+  sectionTitle: {
+    color: '#29243B',
+    fontSize: 20,
+    fontWeight: '700',
   },
-  goalProgressLabel: {
-    color: '#777386',
-    fontSize: 11,
+  sectionSubtitle: {
+    color: '#817B8D',
+    fontSize: 12,
+    marginTop: 5,
   },
-  goalProgressValue: {
-    color: '#6852B8',
-    fontSize: 11,
+  createButton: {
+    backgroundColor: '#FFFFFF',
+    borderWidth: 1,
+    borderColor: '#DCD4EF',
+    borderRadius: 11,
+    padding: 15,
+    alignItems: 'center',
+    marginBottom: 16,
+  },
+  createButtonText: {
+    color: '#7055C8',
+    fontSize: 14,
     fontWeight: '700',
   },
   emptyCard: {
     backgroundColor: '#FFFFFF',
-    borderRadius: 15,
+    borderRadius: 14,
+    padding: 21,
     borderWidth: 1,
-    borderColor: '#EEEAF4',
-    padding: 20,
-    marginBottom: 25,
+    borderColor: '#ECE9F3',
   },
   emptyTitle: {
-    color: '#302B40',
-    fontSize: 14,
+    color: '#29243B',
+    fontSize: 16,
+    fontWeight: '700',
+    marginBottom: 7,
+  },
+  emptyText: {
+    color: '#817B8D',
+    fontSize: 13,
+    lineHeight: 20,
+  },
+  goalCard: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 15,
+    padding: 17,
+    marginBottom: 13,
+    borderWidth: 1,
+    borderColor: '#ECE9F3',
+  },
+  goalTopRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
+  },
+  goalTitleContainer: {
+    flex: 1,
+    paddingRight: 10,
+  },
+  goalTitle: {
+    color: '#29243B',
+    fontSize: 16,
     fontWeight: '700',
   },
-  emptyDescription: {
-    color: '#9993A5',
+  goalSubject: {
+    color: '#817B8D',
     fontSize: 12,
-    lineHeight: 19,
-    marginTop: 7,
+    marginTop: 5,
   },
-  taskRow: {
+  priority: {
+    color: '#7055C8',
+    fontSize: 11,
+    fontWeight: '700',
+    backgroundColor: '#F0ECF9',
+    paddingHorizontal: 9,
+    paddingVertical: 5,
+    borderRadius: 7,
+  },
+  goalBottomRow: {
     flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#FFFFFF',
-    borderRadius: 13,
-    borderWidth: 1,
-    borderColor: '#EEEAF4',
-    padding: 14,
+    justifyContent: 'space-between',
+    marginTop: 17,
     marginBottom: 9,
   },
-  taskIndicator: {
-    width: 10,
-    height: 10,
-    borderRadius: 5,
-    backgroundColor: '#D8D1E9',
-    marginRight: 12,
+  goalDate: {
+    color: '#817B8D',
+    fontSize: 11,
   },
-  taskCompleted: {
-    backgroundColor: '#6D9B80',
-  },
-  taskInformation: {
-    flex: 1,
-  },
-  taskTitle: {
-    color: '#302B40',
-    fontSize: 13,
+  taskProgress: {
+    color: '#514B60',
+    fontSize: 11,
     fontWeight: '600',
   },
-  completedTaskTitle: {
-    color: '#9993A5',
+  goalProgressTrack: {
+    height: 6,
+    backgroundColor: '#EEEAF6',
+    borderRadius: 10,
+    overflow: 'hidden',
   },
-  taskParent: {
-    color: '#9993A5',
-    fontSize: 11,
-    marginTop: 4,
+  goalProgressFill: {
+    height: 6,
+    backgroundColor: '#8065CE',
+    borderRadius: 10,
   },
-  taskStatus: {
-    color: '#777386',
-    fontSize: 10,
-    marginLeft: 8,
-  },
-  footer: {
-    color: '#9993A5',
-    fontSize: 11,
-    textAlign: 'center',
-    marginTop: 30,
+  openGoalText: {
+    color: '#7055C8',
+    fontSize: 12,
+    fontWeight: '600',
+    marginTop: 13,
   },
 });
