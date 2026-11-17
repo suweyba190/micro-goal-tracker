@@ -268,6 +268,7 @@ export default function DashboardScreen() {
           )}
         </View>
 
+        {/* STUDY ACTIVITY */}
         <View style={styles.activitySection}>
           <View style={styles.activitySectionText}>
             <Text style={styles.activityHeading}>Study activity</Text>
@@ -287,6 +288,7 @@ export default function DashboardScreen() {
           </TouchableOpacity>
         </View>
 
+        {/* PROGRESS REPORTS */}
         <View style={styles.activitySection}>
           <View style={styles.activitySectionText}>
             <Text style={styles.activityHeading}>Progress reports</Text>
@@ -306,6 +308,27 @@ export default function DashboardScreen() {
           </TouchableOpacity>
         </View>
 
+        {/* STUDY REMINDERS */}
+        <View style={styles.activitySection}>
+          <View style={styles.activitySectionText}>
+            <Text style={styles.activityHeading}>Study reminders</Text>
+            <Text style={styles.activitySubtitle}>
+              Schedule study sessions and receive reminders at the right time.
+            </Text>
+          </View>
+
+          <TouchableOpacity
+            style={styles.activityButton}
+            onPress={() => router.push('/reminders')}
+            activeOpacity={0.85}
+          >
+            <Text style={styles.activityButtonText}>
+              Manage study reminders
+            </Text>
+          </TouchableOpacity>
+        </View>
+
+        {/* ACADEMIC GOALS */}
         <View style={styles.sectionHeader}>
           <View>
             <Text style={styles.sectionTitle}>Academic goals</Text>

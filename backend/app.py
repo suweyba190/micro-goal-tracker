@@ -2,7 +2,7 @@
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 from werkzeug.security import generate_password_hash, check_password_hash
-from datetime import date, timedelta
+from datetime import date, timedelta, datetime
 import sqlite3
 
 from database import get_connection
@@ -1097,6 +1097,196 @@ def get_study_partner():
         connection.close()
 
 
+
+# ==========================================
+# STUDY REMINDERS
+# ==========================================
+
+# CREATE STUDY REMINDER
+@app.route("/api/reminders", methods=["POST"])
+def create_reminder():
+    data = request.get_json(silent=True) or {}
+
+    student_id = get_student_id(data.get("student_id"))
+    title = str(data.get("title", "")).strip()
+    description = str(data.get("description", "")).strip()
+    reminder_datetime = str(
+        data.get("reminder_datetime", "")
+    ).strip()
+
+    if not student_id or not title or not reminder_datetime:
+        return jsonify({
+            "error": "Student ID, title and reminder date/time are required."
+        }), 400
+
+    try:
+        datetime.fromisoformat(
+            reminder_datetime.replace("Z", "+00:00")
+        )
+    except ValueError:
+        return jsonify({
+            "error": "Please provide a valid reminder date and time."
+        }), 400
+
+    connection = get_connection()
+
+    try:
+        cursor = connection.execute(
+            """
+            INSERT INTO StudyReminder
+            (student_id, title, description, reminder_datetime)
+            VALUES (?, ?, ?, ?)
+            """,
+            (
+                student_id,
+                title,
+                description,
+                reminder_datetime
+            )
+        )
+
+        connection.commit()
+
+        return jsonify({
+            "message": "Study reminder created successfully!",
+            "reminder_id": cursor.lastrowid
+        }), 201
+
+    except sqlite3.IntegrityError:
+        return jsonify({
+            "error": "Student account could not be found."
+        }), 404
+
+    finally:
+        connection.close()
+
+
+# GET STUDY REMINDERS
+@app.route("/api/reminders", methods=["GET"])
+def get_reminders():
+    student_id = get_student_id(
+        request.args.get("student_id")
+    )
+
+    if not student_id:
+        return jsonify({
+            "error": "A valid student ID is required."
+        }), 400
+
+    connection = get_connection()
+
+    try:
+        reminders = connection.execute(
+            """
+            SELECT reminder_id, student_id, title,
+                   description, reminder_datetime,
+                   is_completed, created_at
+            FROM StudyReminder
+            WHERE student_id = ?
+            ORDER BY reminder_datetime ASC
+            """,
+            (student_id,)
+        ).fetchall()
+
+        return jsonify({
+            "reminders": [
+                {
+                    "id": reminder["reminder_id"],
+                    "studentId": reminder["student_id"],
+                    "title": reminder["title"],
+                    "description": reminder["description"] or "",
+                    "reminderDatetime": reminder["reminder_datetime"],
+                    "completed": bool(reminder["is_completed"]),
+                    "createdAt": reminder["created_at"]
+                }
+                for reminder in reminders
+            ]
+        }), 200
+
+    finally:
+        connection.close()
+
+
+# COMPLETE OR UNCOMPLETE STUDY REMINDER
+@app.route("/api/reminders/<int:reminder_id>", methods=["PUT"])
+def update_reminder(reminder_id):
+    data = request.get_json(silent=True) or {}
+
+    student_id = get_student_id(data.get("student_id"))
+    completed = data.get("completed")
+
+    if not student_id or not isinstance(completed, bool):
+        return jsonify({
+            "error": "Student ID and completion status are required."
+        }), 400
+
+    connection = get_connection()
+
+    try:
+        cursor = connection.execute(
+            """
+            UPDATE StudyReminder
+            SET is_completed = ?
+            WHERE reminder_id = ? AND student_id = ?
+            """,
+            (int(completed), reminder_id, student_id)
+        )
+
+        connection.commit()
+
+        if cursor.rowcount == 0:
+            return jsonify({
+                "error": "Reminder could not be found."
+            }), 404
+
+        return jsonify({
+            "message": "Reminder updated successfully!"
+        }), 200
+
+    finally:
+        connection.close()
+
+
+# DELETE STUDY REMINDER
+@app.route("/api/reminders/<int:reminder_id>", methods=["DELETE"])
+def delete_reminder(reminder_id):
+    student_id = get_student_id(
+        request.args.get("student_id")
+    )
+
+    if not student_id:
+        return jsonify({
+            "error": "A valid student ID is required."
+        }), 400
+
+    connection = get_connection()
+
+    try:
+        cursor = connection.execute(
+            """
+            DELETE FROM StudyReminder
+            WHERE reminder_id = ? AND student_id = ?
+            """,
+            (reminder_id, student_id)
+        )
+
+        connection.commit()
+
+        if cursor.rowcount == 0:
+            return jsonify({
+                "error": "Reminder could not be found."
+            }), 404
+
+        return jsonify({
+            "message": "Reminder deleted successfully!"
+        }), 200
+
+    finally:
+        connection.close()
+
+
+        
 # RUN APPLICATION
 if __name__ == "__main__":
-    app.run(debug=True, port=5000)
+    app.run(host="0.0.0.0", debug=True, port=5000)
+
