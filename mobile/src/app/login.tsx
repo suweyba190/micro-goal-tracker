@@ -12,12 +12,14 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import { Link } from 'expo-router';
+import { Link, useRouter } from 'expo-router';
 import * as SecureStore from 'expo-secure-store';
 
 const API_URL = 'http://10.50.61.74:5000';
 
 export default function LoginScreen() {
+  const router = useRouter();
+
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -73,7 +75,13 @@ export default function LoginScreen() {
 
       Alert.alert(
         'Login successful',
-        `Welcome back, ${student.full_name}! Your session has been saved.`,
+        `Welcome back, ${student.full_name}!`,
+        [
+          {
+            text: 'Continue',
+            onPress: () => router.replace('/dashboard'),
+          },
+        ],
       );
     } catch {
       Alert.alert(
