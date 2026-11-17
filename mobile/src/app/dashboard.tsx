@@ -40,12 +40,26 @@ type Student = {
   email: string;
 };
 
+type Partner = {
+  student_id: number;
+  full_name: string;
+  email: string;
+  current_streak: number;
+};
+
+type PartnerData = {
+  my_streak: number;
+  partner: Partner | null;
+  message?: string;
+};
+
 export default function DashboardScreen() {
   const router = useRouter();
 
   const [student, setStudent] = useState<Student | null>(null);
   const [goals, setGoals] = useState<Goal[]>([]);
   const [microGoals, setMicroGoals] = useState<MicroGoal[]>([]);
+  const [partnerData, setPartnerData] = useState<PartnerData | null>(null);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
 
@@ -61,24 +75,43 @@ export default function DashboardScreen() {
       const currentStudent: Student = JSON.parse(savedSession);
       setStudent(currentStudent);
 
-      const [goalsResponse, microGoalsResponse] = await Promise.all([
-        fetch(`${API_URL}/api/goals?student_id=${currentStudent.student_id}`),
-        fetch(`${API_URL}/api/micro-goals?student_id=${currentStudent.student_id}`),
-      ]);
+      const [goalsResponse, microGoalsResponse, partnerResponse] =
+        await Promise.all([
+          fetch(
+            `${API_URL}/api/goals?student_id=${currentStudent.student_id}`
+          ),
+          fetch(
+            `${API_URL}/api/micro-goals?student_id=${currentStudent.student_id}`
+          ),
+          fetch(
+            `${API_URL}/api/partners?student_id=${currentStudent.student_id}`
+          ).catch(() => null),
+        ]);
 
       const goalsData = await goalsResponse.json();
       const microGoalsData = await microGoalsResponse.json();
 
       if (!goalsResponse.ok) {
-        throw new Error(goalsData.message || 'Could not load academic goals.');
+        throw new Error(
+          goalsData.message || 'Could not load academic goals.'
+        );
       }
 
       if (!microGoalsResponse.ok) {
-        throw new Error(microGoalsData.message || 'Could not load micro-goals.');
+        throw new Error(
+          microGoalsData.message || 'Could not load micro-goals.'
+        );
       }
 
       setGoals(goalsData.goals || []);
       setMicroGoals(microGoalsData.micro_goals || []);
+
+      if (partnerResponse && partnerResponse.ok) {
+        const partnerResult = await partnerResponse.json();
+        setPartnerData(partnerResult);
+      } else {
+        setPartnerData(null);
+      }
     } catch (error) {
       Alert.alert(
         'Dashboard error',
@@ -172,6 +205,67 @@ export default function DashboardScreen() {
               <Text style={styles.summaryDescription}>Tasks completed</Text>
             </View>
           </View>
+        </View>
+
+        {/* STUDY STREAK SECTION */}
+        <View style={styles.streakCard}>
+          <Text style={styles.streakHeading}>Study streak</Text>
+          <Text style={styles.streakSubtitle}>
+            Keep completing micro-goals each day to maintain your streak.
+          </Text>
+
+          {partnerData ? (
+            <>
+              <View style={styles.myStreakContainer}>
+                <Text style={styles.streakNumber}>
+                  {partnerData.my_streak}
+                </Text>
+                <Text style={styles.streakDays}>
+                  {partnerData.my_streak === 1 ? 'day' : 'days'} in a row
+                </Text>
+                <Text style={styles.streakLabel}>Your current streak</Text>
+              </View>
+
+              <View style={styles.streakDivider} />
+
+              {partnerData.partner ? (
+                <View style={styles.partnerContainer}>
+                  <View style={styles.partnerTextContainer}>
+                    <Text style={styles.partnerHeading}>Study partner</Text>
+                    <Text style={styles.partnerName}>
+                      {partnerData.partner.full_name}
+                    </Text>
+                  </View>
+
+                  <View style={styles.partnerStreakContainer}>
+                    <Text style={styles.partnerStreakNumber}>
+                      {partnerData.partner.current_streak}
+                    </Text>
+                    <Text style={styles.partnerStreakLabel}>
+                      {partnerData.partner.current_streak === 1
+                        ? 'day'
+                        : 'days'}
+                    </Text>
+                  </View>
+                </View>
+              ) : (
+                <View style={styles.noPartnerContainer}>
+                  <Text style={styles.noPartnerHeading}>
+                    No study partner connected
+                  </Text>
+                  <Text style={styles.noPartnerText}>
+                    Your personal study streak is still being tracked.
+                  </Text>
+                </View>
+              )}
+            </>
+          ) : (
+            <View style={styles.noPartnerContainer}>
+              <Text style={styles.noPartnerText}>
+                Streak information is currently unavailable. Pull down to refresh.
+              </Text>
+            </View>
+          )}
         </View>
 
         <View style={styles.activitySection}>
@@ -389,6 +483,98 @@ const styles = StyleSheet.create({
     height: 45,
     backgroundColor: '#A99AD8',
     marginHorizontal: 35,
+  },
+  streakCard: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 15,
+    padding: 18,
+    marginBottom: 18,
+    borderWidth: 1,
+    borderColor: '#ECE9F3',
+  },
+  streakHeading: {
+    color: '#29243B',
+    fontSize: 18,
+    fontWeight: '700',
+  },
+  streakSubtitle: {
+    color: '#817B8D',
+    fontSize: 12,
+    lineHeight: 19,
+    marginTop: 5,
+  },
+  myStreakContainer: {
+    alignItems: 'center',
+    paddingVertical: 18,
+  },
+  streakNumber: {
+    color: '#7055C8',
+    fontSize: 43,
+    fontWeight: '700',
+  },
+  streakDays: {
+    color: '#29243B',
+    fontSize: 14,
+    fontWeight: '600',
+    marginTop: 2,
+  },
+  streakLabel: {
+    color: '#817B8D',
+    fontSize: 12,
+    marginTop: 5,
+  },
+  streakDivider: {
+    height: 1,
+    backgroundColor: '#ECE9F3',
+    marginVertical: 5,
+  },
+  partnerContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingTop: 14,
+  },
+  partnerTextContainer: {
+    flex: 1,
+  },
+  partnerHeading: {
+    color: '#817B8D',
+    fontSize: 11,
+    marginBottom: 5,
+  },
+  partnerName: {
+    color: '#29243B',
+    fontSize: 14,
+    fontWeight: '700',
+  },
+  partnerStreakContainer: {
+    alignItems: 'center',
+    backgroundColor: '#F0ECF9',
+    borderRadius: 10,
+    paddingHorizontal: 16,
+    paddingVertical: 9,
+  },
+  partnerStreakNumber: {
+    color: '#7055C8',
+    fontSize: 21,
+    fontWeight: '700',
+  },
+  partnerStreakLabel: {
+    color: '#817B8D',
+    fontSize: 10,
+  },
+  noPartnerContainer: {
+    paddingTop: 16,
+  },
+  noPartnerHeading: {
+    color: '#29243B',
+    fontSize: 13,
+    fontWeight: '600',
+  },
+  noPartnerText: {
+    color: '#817B8D',
+    fontSize: 12,
+    lineHeight: 19,
   },
   activitySection: {
     backgroundColor: '#FFFFFF',
