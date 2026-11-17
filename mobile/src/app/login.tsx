@@ -13,6 +13,7 @@ import {
   View,
 } from 'react-native';
 import { Link } from 'expo-router';
+import * as SecureStore from 'expo-secure-store';
 
 const API_URL = 'http://10.50.61.74:5000';
 
@@ -51,14 +52,33 @@ export default function LoginScreen() {
         return;
       }
 
+      const student = result.student;
+
+      if (!student || !student.student_id) {
+        Alert.alert(
+          'Login error',
+          'The server did not return valid student details. Please try again.',
+        );
+        return;
+      }
+
+      await SecureStore.setItemAsync(
+        'studentSession',
+        JSON.stringify({
+          student_id: student.student_id,
+          full_name: student.full_name,
+          email: student.email,
+        }),
+      );
+
       Alert.alert(
         'Login successful',
-        `Welcome back, ${result.full_name || 'student'}! Your account has been verified.`,
+        `Welcome back, ${student.full_name}! Your session has been saved.`,
       );
     } catch {
       Alert.alert(
         'Connection error',
-        'Could not reach the server. Check your Wi-Fi and make sure the backend is running.',
+        'Could not reach the server or save your session. Check your Wi-Fi and make sure the backend is running.',
       );
     } finally {
       setLoading(false);
