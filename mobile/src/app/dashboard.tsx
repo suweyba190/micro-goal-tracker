@@ -171,6 +171,25 @@ export default function DashboardScreen() {
           </View>
         </View>
 
+        <View style={styles.activitySection}>
+          <View style={styles.activitySectionText}>
+            <Text style={styles.activityHeading}>Study activity</Text>
+            <Text style={styles.activitySubtitle}>
+              Record your study sessions and track your time.
+            </Text>
+          </View>
+
+          <TouchableOpacity
+            style={styles.activityButton}
+            onPress={() => router.push('/activity')}
+            activeOpacity={0.85}
+          >
+            <Text style={styles.activityButtonText}>
+              Record study activity
+            </Text>
+          </TouchableOpacity>
+        </View>
+
         <View style={styles.sectionHeader}>
           <View>
             <Text style={styles.sectionTitle}>Academic goals</Text>
@@ -319,7 +338,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#7055C8',
     borderRadius: 17,
     padding: 21,
-    marginBottom: 29,
+    marginBottom: 22,
   },
   summaryLabel: {
     color: '#E9E2FF',
@@ -347,6 +366,39 @@ const styles = StyleSheet.create({
     height: 45,
     backgroundColor: '#A99AD8',
     marginHorizontal: 35,
+  },
+  activitySection: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 15,
+    padding: 17,
+    marginBottom: 27,
+    borderWidth: 1,
+    borderColor: '#ECE9F3',
+  },
+  activitySectionText: {
+    marginBottom: 14,
+  },
+  activityHeading: {
+    color: '#29243B',
+    fontSize: 17,
+    fontWeight: '700',
+  },
+  activitySubtitle: {
+    color: '#817B8D',
+    fontSize: 12,
+    lineHeight: 19,
+    marginTop: 5,
+  },
+  activityButton: {
+    backgroundColor: '#F0ECF9',
+    borderRadius: 10,
+    padding: 13,
+    alignItems: 'center',
+  },
+  activityButtonText: {
+    color: '#7055C8',
+    fontSize: 14,
+    fontWeight: '700',
   },
   sectionHeader: {
     marginBottom: 16,
