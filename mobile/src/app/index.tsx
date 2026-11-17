@@ -7,6 +7,7 @@ import {
   StyleSheet,
   Text,
   View,
+  Pressable,
 } from 'react-native';
 
 export default function WelcomeScreen() {
@@ -26,89 +27,82 @@ export default function WelcomeScreen() {
         </View>
 
         <View style={styles.hero}>
-          <Text style={styles.eyebrow}>STUDY WITH PURPOSE</Text>
+          <Text style={styles.eyebrow}>A BETTER WAY TO STUDY</Text>
+
           <Text style={styles.heading}>
-            Make every study session count.
+            Big goals.{'\n'}
+            Smaller steps.
           </Text>
+
           <Text style={styles.description}>
-            Turn your academic goals into manageable daily tasks and build
-            better study habits, one step at a time.
+            Organise your academic work into manageable daily tasks and
+            build study habits that last.
           </Text>
         </View>
 
-        <View style={styles.progressCard}>
-          <View style={styles.progressTop}>
-            <View style={styles.progressText}>
-              <Text style={styles.cardLabel}>YOUR PROGRESS</Text>
-              <Text style={styles.cardTitle}>Small steps add up.</Text>
+        <View style={styles.previewCard}>
+          <View style={styles.previewHeader}>
+            <View>
+              <Text style={styles.previewLabel}>YOUR STUDY PLAN</Text>
+              <Text style={styles.previewTitle}>One goal at a time</Text>
             </View>
-            <View style={styles.progressCircle}>
-              <Text style={styles.progressNumber}>45%</Text>
+
+            <View style={styles.subjectTag}>
+              <Text style={styles.subjectText}>EXAMPLE</Text>
             </View>
           </View>
 
-          <View style={styles.progressTrack}>
-            <View style={styles.progressFill} />
-          </View>
-          <Text style={styles.progressCaption}>
-            Stay consistent and keep moving towards your goals.
-          </Text>
-        </View>
-
-        <View style={styles.features}>
-          <Text style={styles.sectionTitle}>Everything starts with a plan</Text>
-
-          <View style={styles.featureRow}>
-            <View style={styles.featureNumber}>
-              <Text style={styles.numberText}>01</Text>
-            </View>
-            <View style={styles.featureContent}>
-              <Text style={styles.featureTitle}>Set academic goals</Text>
-              <Text style={styles.featureDescription}>
-                Plan what you want to achieve in each subject.
-              </Text>
-            </View>
+          <View style={styles.goalBox}>
+            <Text style={styles.goalLabel}>ACADEMIC GOAL</Text>
+            <Text style={styles.goalTitle}>
+              Prepare for Database Systems
+            </Text>
           </View>
 
-          <View style={styles.featureRow}>
-            <View style={styles.featureNumber}>
-              <Text style={styles.numberText}>02</Text>
-            </View>
-            <View style={styles.featureContent}>
-              <Text style={styles.featureTitle}>Create daily micro-goals</Text>
-              <Text style={styles.featureDescription}>
-                Break bigger tasks into smaller actions.
-              </Text>
-            </View>
+          <Text style={styles.tasksLabel}>BREAK IT INTO SMALL TASKS</Text>
+
+          <View style={styles.taskRow}>
+            <View style={styles.taskCircle} />
+            <Text style={styles.taskText}>Review lecture notes</Text>
           </View>
 
-          <View style={styles.featureRow}>
-            <View style={styles.featureNumber}>
-              <Text style={styles.numberText}>03</Text>
-            </View>
-            <View style={styles.featureContent}>
-              <Text style={styles.featureTitle}>Monitor your progress</Text>
-              <Text style={styles.featureDescription}>
-                Review your work and build consistent habits.
-              </Text>
-            </View>
+          <View style={styles.taskRow}>
+            <View style={styles.taskCircle} />
+            <Text style={styles.taskText}>Practise SQL queries</Text>
+          </View>
+
+          <View style={styles.taskRow}>
+            <View style={styles.taskCircle} />
+            <Text style={styles.taskText}>Summarise key concepts</Text>
           </View>
         </View>
 
         <View style={styles.actions}>
-          <Link href="/register" style={styles.primaryButton}>
-            <Text style={styles.primaryButtonText}>Create an account</Text>
+          <Link href="/register" asChild>
+            <Pressable
+              style={styles.primaryButton}
+              accessibilityRole="button"
+            >
+              <Text style={styles.primaryButtonText}>
+                Create an account
+              </Text>
+            </Pressable>
           </Link>
 
-          <Link href="/login" style={styles.secondaryButton}>
-            <Text style={styles.secondaryButtonText}>
-              Already have an account? Connect
-            </Text>
+          <Link href="/login" asChild>
+            <Pressable
+              style={styles.secondaryButton}
+              accessibilityRole="button"
+            >
+              <Text style={styles.secondaryButtonText}>
+                I already have an account
+              </Text>
+            </Pressable>
           </Link>
         </View>
 
         <Text style={styles.footer}>
-          Small steps. Consistent progress.
+          Plan your work. Take one step at a time.
         </Text>
       </ScrollView>
     </SafeAreaView>
@@ -118,197 +112,179 @@ export default function WelcomeScreen() {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: '#F8F7FC',
+    backgroundColor: '#F7F6FB',
   },
   container: {
     flexGrow: 1,
     paddingHorizontal: 25,
     paddingTop: 18,
-    paddingBottom: 28,
+    paddingBottom: 25,
   },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 32,
+    marginBottom: 43,
   },
   logo: {
-    width: 38,
-    height: 38,
-    borderRadius: 11,
+    width: 42,
+    height: 42,
+    borderRadius: 13,
     backgroundColor: '#6852B8',
-    justifyContent: 'center',
     alignItems: 'center',
-    marginRight: 10,
+    justifyContent: 'center',
+    marginRight: 11,
   },
   logoText: {
     color: '#FFFFFF',
-    fontSize: 21,
+    fontSize: 22,
     fontWeight: '700',
   },
   brand: {
-    fontSize: 19,
-    fontWeight: '700',
     color: '#29243A',
-    letterSpacing: -0.3,
+    fontSize: 20,
+    fontWeight: '700',
+    letterSpacing: -0.5,
   },
   hero: {
-    marginBottom: 23,
+    marginBottom: 29,
   },
   eyebrow: {
-    color: '#7663B5',
-    fontSize: 10,
+    color: '#7561B5',
+    fontSize: 11,
     fontWeight: '700',
-    letterSpacing: 1.5,
-    marginBottom: 10,
+    letterSpacing: 1.8,
+    marginBottom: 15,
   },
   heading: {
     color: '#29243A',
-    fontSize: 34,
-    lineHeight: 41,
-    fontWeight: '700',
-    letterSpacing: -0.8,
-    marginBottom: 11,
+    fontSize: 39,
+    lineHeight: 46,
+    fontWeight: '800',
+    letterSpacing: -1.4,
+    marginBottom: 15,
   },
   description: {
     color: '#777386',
-    fontSize: 14,
-    lineHeight: 21,
+    fontSize: 15,
+    lineHeight: 23,
+    maxWidth: 330,
   },
-  progressCard: {
+  previewCard: {
     backgroundColor: '#FFFFFF',
-    padding: 18,
-    borderRadius: 17,
-    marginBottom: 27,
+    borderRadius: 20,
+    padding: 20,
     borderWidth: 1,
-    borderColor: '#EFEDF5',
+    borderColor: '#EBE7F2',
+    marginBottom: 29,
   },
-  progressTop: {
+  previewHeader: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    marginBottom: 16,
+    marginBottom: 19,
   },
-  progressText: {
-    flex: 1,
-    paddingRight: 10,
-  },
-  cardLabel: {
+  previewLabel: {
+    color: '#9189A3',
     fontSize: 10,
-    letterSpacing: 1.1,
-    color: '#918BA2',
     fontWeight: '700',
-    marginBottom: 6,
+    letterSpacing: 1.3,
+    marginBottom: 5,
   },
-  cardTitle: {
-    fontSize: 16,
-    fontWeight: '700',
-    color: '#302B40',
-  },
-  progressCircle: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
-    backgroundColor: '#F0ECFA',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  progressNumber: {
-    color: '#6852B8',
-    fontSize: 14,
-    fontWeight: '700',
-  },
-  progressTrack: {
-    height: 7,
-    backgroundColor: '#EEEAF5',
-    borderRadius: 10,
-    overflow: 'hidden',
-    marginBottom: 10,
-  },
-  progressFill: {
-    width: '45%',
-    height: '100%',
-    backgroundColor: '#7660C3',
-    borderRadius: 10,
-  },
-  progressCaption: {
-    color: '#898496',
-    fontSize: 11,
-    lineHeight: 17,
-  },
-  features: {
-    marginBottom: 23,
-  },
-  sectionTitle: {
+  previewTitle: {
     color: '#302B40',
     fontSize: 17,
     fontWeight: '700',
-    marginBottom: 16,
   },
-  featureRow: {
+  subjectTag: {
+    backgroundColor: '#F0ECFA',
+    paddingHorizontal: 10,
+    paddingVertical: 7,
+    borderRadius: 8,
+  },
+  subjectText: {
+    color: '#6852B8',
+    fontSize: 9,
+    fontWeight: '700',
+    letterSpacing: 0.7,
+  },
+  goalBox: {
+    backgroundColor: '#F7F5FC',
+    borderRadius: 12,
+    padding: 14,
+    marginBottom: 19,
+  },
+  goalLabel: {
+    color: '#8C83A3',
+    fontSize: 9,
+    fontWeight: '700',
+    letterSpacing: 1.1,
+    marginBottom: 7,
+  },
+  goalTitle: {
+    color: '#302B40',
+    fontSize: 15,
+    fontWeight: '700',
+  },
+  tasksLabel: {
+    color: '#9189A3',
+    fontSize: 9,
+    fontWeight: '700',
+    letterSpacing: 1.1,
+    marginBottom: 13,
+  },
+  taskRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 14,
+    paddingVertical: 9,
   },
-  featureNumber: {
-    width: 35,
-    height: 35,
-    borderRadius: 10,
-    backgroundColor: '#EFEBF8',
-    justifyContent: 'center',
-    alignItems: 'center',
+  taskCircle: {
+    width: 17,
+    height: 17,
+    borderRadius: 6,
+    borderWidth: 1.5,
+    borderColor: '#C9C1DA',
     marginRight: 12,
   },
-  numberText: {
-    color: '#6852B8',
-    fontSize: 11,
-    fontWeight: '700',
-  },
-  featureContent: {
-    flex: 1,
-  },
-  featureTitle: {
-    color: '#302B40',
+  taskText: {
+    color: '#514B61',
     fontSize: 13,
-    fontWeight: '700',
-    marginBottom: 3,
-  },
-  featureDescription: {
-    color: '#898496',
-    fontSize: 12,
-    lineHeight: 17,
+    fontWeight: '500',
   },
   actions: {
-    gap: 10,
-    marginTop: 1,
+    gap: 12,
   },
   primaryButton: {
+    minHeight: 55,
     backgroundColor: '#6852B8',
-    borderRadius: 12,
-    paddingVertical: 15,
+    borderRadius: 14,
     alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: 15,
   },
   primaryButtonText: {
     color: '#FFFFFF',
-    fontSize: 14,
+    fontSize: 15,
     fontWeight: '700',
   },
   secondaryButton: {
+    minHeight: 53,
     backgroundColor: '#FFFFFF',
     borderWidth: 1,
     borderColor: '#DED8EC',
-    borderRadius: 12,
-    paddingVertical: 14,
+    borderRadius: 14,
     alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: 15,
   },
   secondaryButtonText: {
     color: '#6852B8',
-    fontSize: 13,
+    fontSize: 14,
     fontWeight: '600',
   },
   footer: {
+    color: '#9690A3',
     textAlign: 'center',
-    color: '#9993A5',
     fontSize: 11,
-    marginTop: 19,
+    marginTop: 20,
   },
 });

@@ -1,6 +1,7 @@
 
 import { useState } from 'react';
 import {
+  ActivityIndicator,
   Alert,
   KeyboardAvoidingView,
   Platform,
@@ -13,23 +14,55 @@ import {
 } from 'react-native';
 import { Link } from 'expo-router';
 
+const API_URL = 'http://10.50.61.74:5000';
+
 export default function LoginScreen() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
 
-  const handleLogin = () => {
+  const handleLogin = async () => {
     if (!email.trim() || !password) {
-      Alert.alert(
-        'Missing information',
-        'Please enter your email address and password.',
-      );
+      Alert.alert('Missing information', 'Enter your email and password.');
       return;
     }
 
-    Alert.alert(
-      'Ready to connect',
-      'Your login form is ready. We will connect it to your existing account system next.',
-    );
+    try {
+      setLoading(true);
+
+      const response = await fetch(`${API_URL}/api/login`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email: email.trim().toLowerCase(),
+          password,
+        }),
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        Alert.alert(
+          'Unable to connect',
+          result.error || 'The email or password is incorrect.',
+        );
+        return;
+      }
+
+      Alert.alert(
+        'Login successful',
+        `Welcome back, ${result.full_name || 'student'}! Your account has been verified.`,
+      );
+    } catch {
+      Alert.alert(
+        'Connection error',
+        'Could not reach the server. Check your Wi-Fi and make sure the backend is running.',
+      );
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -50,7 +83,8 @@ export default function LoginScreen() {
           <Text style={styles.eyebrow}>WELCOME BACK</Text>
           <Text style={styles.heading}>Connect to your account</Text>
           <Text style={styles.description}>
-            Continue working towards your academic goals.
+            Enter your account details to continue working towards your
+            academic goals.
           </Text>
         </View>
 
@@ -78,17 +112,24 @@ export default function LoginScreen() {
           />
 
           <TouchableOpacity
-            style={styles.button}
+            style={[styles.button, loading && styles.buttonDisabled]}
             onPress={handleLogin}
             activeOpacity={0.85}
+            disabled={loading}
           >
-            <Text style={styles.buttonText}>Connect</Text>
+            {loading ? (
+              <ActivityIndicator color="#FFFFFF" />
+            ) : (
+              <Text style={styles.buttonText}>Connect</Text>
+            )}
           </TouchableOpacity>
 
           <View style={styles.registerRow}>
-            <Text style={styles.registerText}>Don't have an account? </Text>
+            <Text style={styles.registerText}>
+              Don't have an account?{' '}
+            </Text>
             <Link href="/register" style={styles.registerLink}>
-              Create account
+              Create one
             </Link>
           </View>
         </View>
@@ -168,6 +209,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginTop: 32,
   },
+  buttonDisabled: {
+    opacity: 0.7,
+  },
   buttonText: {
     color: '#FFFFFF',
     fontSize: 15,
@@ -177,8 +221,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    flexWrap: 'wrap',
     marginTop: 27,
+    flexWrap: 'wrap',
   },
   registerText: {
     color: '#777386',
@@ -196,4 +240,3 @@ const styles = StyleSheet.create({
     marginTop: 40,
   },
 });
-

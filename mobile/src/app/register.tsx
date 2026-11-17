@@ -1,6 +1,7 @@
 
 import { useState } from 'react';
 import {
+  ActivityIndicator,
   Alert,
   KeyboardAvoidingView,
   Platform,
@@ -11,34 +12,97 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import { Link } from 'expo-router';
+import { Link, router } from 'expo-router';
+
+const API_URL = 'http://10.50.61.74:5000';
 
 export default function RegisterScreen() {
   const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [loading, setLoading] = useState(false);
 
-  const handleRegister = () => {
-    if (!fullName.trim() || !email.trim() || !password || !confirmPassword) {
+  const handleRegister = async () => {
+    if (
+      !fullName.trim() ||
+      !email.trim() ||
+      !password ||
+      !confirmPassword
+    ) {
       Alert.alert('Missing information', 'Please complete all the fields.');
       return;
     }
 
-    if (password.length < 6) {
-      Alert.alert('Password too short', 'Use at least 6 characters.');
+    if (!email.includes('@')) {
+      Alert.alert('Invalid email', 'Please enter a valid email address.');
+      return;
+    }
+
+    if (password.length < 8) {
+      Alert.alert(
+        'Password too short',
+        'Your password must contain at least 8 characters.',
+      );
       return;
     }
 
     if (password !== confirmPassword) {
-      Alert.alert('Passwords do not match', 'Please check your passwords.');
+      Alert.alert(
+        'Passwords do not match',
+        'Please check your passwords and try again.',
+      );
       return;
     }
 
-    Alert.alert(
-      'Details completed',
-      'Your registration form is ready. We will connect it to your account system next.',
-    );
+    try {
+      setLoading(true);
+
+      const response = await fetch(`${API_URL}/api/register`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          full_name: fullName.trim(),
+          email: email.trim().toLowerCase(),
+          password,
+        }),
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        Alert.alert(
+          'Registration unsuccessful',
+          result.error || 'Something went wrong. Please try again.',
+        );
+        return;
+      }
+
+      Alert.alert(
+        'Account created',
+        'Your account has been created successfully. You can now connect.',
+        [
+          {
+            text: 'Continue',
+            onPress: () => router.replace('/login'),
+          },
+        ],
+      );
+
+      setFullName('');
+      setEmail('');
+      setPassword('');
+      setConfirmPassword('');
+    } catch {
+      Alert.alert(
+        'Connection error',
+        'Could not reach the server. Check that your computer and phone are connected to the same Wi-Fi and that the backend is running.',
+      );
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -59,7 +123,7 @@ export default function RegisterScreen() {
           <Text style={styles.eyebrow}>GET STARTED</Text>
           <Text style={styles.heading}>Create your account</Text>
           <Text style={styles.description}>
-            Set up your account and start organising your study goals.
+            Set up your account to start organising your academic goals.
           </Text>
         </View>
 
@@ -107,15 +171,22 @@ export default function RegisterScreen() {
           />
 
           <TouchableOpacity
-            style={styles.button}
+            style={[styles.button, loading && styles.buttonDisabled]}
             onPress={handleRegister}
             activeOpacity={0.85}
+            disabled={loading}
           >
-            <Text style={styles.buttonText}>Create account</Text>
+            {loading ? (
+              <ActivityIndicator color="#FFFFFF" />
+            ) : (
+              <Text style={styles.buttonText}>Create account</Text>
+            )}
           </TouchableOpacity>
 
           <View style={styles.loginRow}>
-            <Text style={styles.loginText}>Already have an account? </Text>
+            <Text style={styles.loginText}>
+              Already have an account?{' '}
+            </Text>
             <Link href="/login" style={styles.loginLink}>
               Connect
             </Link>
@@ -196,6 +267,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginTop: 30,
+  },
+  buttonDisabled: {
+    opacity: 0.7,
   },
   buttonText: {
     color: '#FFFFFF',
