@@ -156,12 +156,15 @@ export default function DashboardScreen() {
 
         <View style={styles.summaryCard}>
           <Text style={styles.summaryLabel}>YOUR STUDY PROGRESS</Text>
+
           <View style={styles.summaryRow}>
             <View>
               <Text style={styles.summaryNumber}>{goals.length}</Text>
               <Text style={styles.summaryDescription}>Academic goals</Text>
             </View>
+
             <View style={styles.summaryDivider} />
+
             <View>
               <Text style={styles.summaryNumber}>
                 {completedTasks}/{totalTasks}
@@ -186,6 +189,25 @@ export default function DashboardScreen() {
           >
             <Text style={styles.activityButtonText}>
               Record study activity
+            </Text>
+          </TouchableOpacity>
+        </View>
+
+        <View style={styles.activitySection}>
+          <View style={styles.activitySectionText}>
+            <Text style={styles.activityHeading}>Progress reports</Text>
+            <Text style={styles.activitySubtitle}>
+              Review your completed goals and study time.
+            </Text>
+          </View>
+
+          <TouchableOpacity
+            style={styles.activityButton}
+            onPress={() => router.push('/reports')}
+            activeOpacity={0.85}
+          >
+            <Text style={styles.activityButtonText}>
+              View progress reports
             </Text>
           </TouchableOpacity>
         </View>
@@ -244,6 +266,7 @@ export default function DashboardScreen() {
                     <Text style={styles.goalTitle}>{goal.title}</Text>
                     <Text style={styles.goalSubject}>{goal.subject}</Text>
                   </View>
+
                   <Text style={styles.priority}>{goal.priority}</Text>
                 </View>
 
@@ -371,7 +394,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFFFF',
     borderRadius: 15,
     padding: 17,
-    marginBottom: 27,
+    marginBottom: 18,
     borderWidth: 1,
     borderColor: '#ECE9F3',
   },
@@ -401,6 +424,7 @@ const styles = StyleSheet.create({
     fontWeight: '700',
   },
   sectionHeader: {
+    marginTop: 9,
     marginBottom: 16,
   },
   sectionTitle: {
@@ -484,33 +508,33 @@ const styles = StyleSheet.create({
   goalBottomRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
+    alignItems: 'center',
     marginTop: 17,
-    marginBottom: 9,
   },
   goalDate: {
     color: '#817B8D',
     fontSize: 11,
   },
   taskProgress: {
-    color: '#514B60',
+    color: '#7055C8',
     fontSize: 11,
-    fontWeight: '600',
+    fontWeight: '700',
   },
   goalProgressTrack: {
     height: 6,
-    backgroundColor: '#EEEAF6',
-    borderRadius: 10,
+    backgroundColor: '#EEEAF5',
+    borderRadius: 5,
+    marginTop: 12,
     overflow: 'hidden',
   },
   goalProgressFill: {
-    height: 6,
-    backgroundColor: '#8065CE',
-    borderRadius: 10,
+    height: '100%',
+    backgroundColor: '#8067D1',
+    borderRadius: 5,
   },
   openGoalText: {
-    color: '#7055C8',
-    fontSize: 12,
-    fontWeight: '600',
+    color: '#817B8D',
+    fontSize: 11,
     marginTop: 13,
   },
 });
